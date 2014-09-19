@@ -107,6 +107,8 @@ MainWindow::~MainWindow()
 {
     foreach (DataBinding *b, m_bindings)
         delete b;
+    foreach (QButtonGroup *bg, m_buttonGroups)
+        delete bg;
     delete ui;
 }
 
@@ -119,14 +121,23 @@ void MainWindow::dataBind()
     m_bindings.push_back(_b); \
     assert(connect(_b, SIGNAL(dataChanged()), this, SLOT(settingsChanged()))); \
 }
+    QButtonGroup *brushButtonGroup = new QButtonGroup;
+    QButtonGroup *shapesButtonGroup = new QButtonGroup;
+    QButtonGroup *filterButtonGroup = new QButtonGroup;
+    m_buttonGroups.push_back(brushButtonGroup);
+    m_buttonGroups.push_back(shapesButtonGroup);
+    m_buttonGroups.push_back(filterButtonGroup);
 
-    BIND( ChoiceBinding::bindRadioButtons(NUM_BRUSH_TYPES, settings.brushType,
-                                    ui->brushTypeSolid,
-                                    ui->brushTypeLinear,
-                                    ui->brushTypeQuadratic,
-                                    ui->brushTypeSmudge,
-                                    ui->brushTypeSpecial1,
-                                    ui->brushTypeSpecial2))
+    BIND( ChoiceBinding::bindRadioButtons(
+            brushButtonGroup,
+            NUM_BRUSH_TYPES,
+            settings.brushType,
+            ui->brushTypeSolid,
+            ui->brushTypeLinear,
+            ui->brushTypeQuadratic,
+            ui->brushTypeSmudge,
+            ui->brushTypeSpecial1,
+            ui->brushTypeSpecial2))
 
     BIND(IntBinding::bindSliderAndTextbox(
         ui->brushRadiusSlider, ui->brushRadiusTextbox, settings.brushRadius, 0, 96))
@@ -141,16 +152,19 @@ void MainWindow::dataBind()
     BIND(BoolBinding::bindCheckbox(ui->brushAlphaBlendingCheckbox, settings.fixAlphaBlending))
 
     // Filter dock
-    BIND( ChoiceBinding::bindRadioButtons(NUM_FILTER_TYPES, settings.filterType,
-                                    ui->filterTypeInvert,
-                                    ui->filterTypeGrayscale,
-                                    ui->filterTypeEdgeDetect,
-                                    ui->filterTypeBlur,
-                                    ui->filterTypeScale,
-                                    ui->filterTypeRotate,
-                                    ui->filterTypeSpecial1,
-                                    ui->filterTypeSpecial2,
-                                    ui->filterTypeSpecial3) )
+    BIND( ChoiceBinding::bindRadioButtons(
+            filterButtonGroup,
+            NUM_FILTER_TYPES,
+            settings.filterType,
+            ui->filterTypeInvert,
+            ui->filterTypeGrayscale,
+            ui->filterTypeEdgeDetect,
+            ui->filterTypeBlur,
+            ui->filterTypeScale,
+            ui->filterTypeRotate,
+            ui->filterTypeSpecial1,
+            ui->filterTypeSpecial2,
+            ui->filterTypeSpecial3) )
     BIND(FloatBinding::bindSliderAndTextbox(
         ui->edgeDetectThresholdSlider, ui->edgeDetectThresholdTextbox, settings.edgeDetectThreshold,
             0.f, 1.f))
@@ -165,15 +179,18 @@ void MainWindow::dataBind()
 
     // Shapes dock
     BIND( BoolBinding::bindCheckbox(ui->showSceneviewInstead, settings.useSceneviewScene) )
-    BIND( ChoiceBinding::bindRadioButtons(NUM_SHAPE_TYPES, settings.shapeType,
-                                    ui->shapeTypeCube,
-                                    ui->shapeTypeCone,
-                                    ui->shapeTypeSphere,
-                                    ui->shapeTypeCylinder,
-                                    ui->shapeTypeTorus,
-                                    ui->shapeTypeSpecial1,
-                                    ui->shapeTypeSpecial2,
-                                    ui->shapeTypeSpecial3) )
+    BIND( ChoiceBinding::bindRadioButtons(
+            shapesButtonGroup,
+            NUM_SHAPE_TYPES,
+            settings.shapeType,
+            ui->shapeTypeCube,
+            ui->shapeTypeCone,
+            ui->shapeTypeSphere,
+            ui->shapeTypeCylinder,
+            ui->shapeTypeTorus,
+            ui->shapeTypeSpecial1,
+            ui->shapeTypeSpecial2,
+            ui->shapeTypeSpecial3) )
     BIND(IntBinding::bindSliderAndTextbox(
         ui->shapeParameterSlider1, ui->shapeParameterTextbox1, settings.shapeParameter1, 1.f, 100.f))
     BIND(IntBinding::bindSliderAndTextbox(

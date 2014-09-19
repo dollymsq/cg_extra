@@ -91,39 +91,39 @@ struct NormalRenderer
         if (i != count)
         {
             std::cerr << "Normal Renderer: could not find count vertices" << std::endl;
-            delete[] data;
-            return;
+        } else
+        {
+            glGenVertexArrays(1, &lineVao);
+            glGenVertexArrays(1, &triVao);
+
+            glGenBuffers(1, &vbo);
+
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * size, data, GL_STATIC_DRAW);
+
+            GLint position = glGetAttribLocation(shader, "position");
+            GLint normal = glGetAttribLocation(shader, "normal");
+            GLint offset = glGetAttribLocation(shader, "arrowOffset");
+
+
+            glBindVertexArray(lineVao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+            glEnableVertexAttribArray(position);
+
+            glBindVertexArray(triVao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (void *)(sizeof(GLfloat) * 6 * count));
+            glVertexAttribPointer(normal, 3, GL_FLOAT, GL_TRUE, sizeof(GLfloat) * 6, (void *)(sizeof(GLfloat) * (6 * count + 3)));
+            glVertexAttribPointer(offset, 1, GL_FLOAT, GL_FALSE, 0, (void *)(sizeof(GLfloat) * (6 * count + 18 * count)));
+            glEnableVertexAttribArray(position);
+            glEnableVertexAttribArray(normal);
+            glEnableVertexAttribArray(offset);
+
+            glBindVertexArray(0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-
-        glGenVertexArrays(1, &lineVao);
-        glGenVertexArrays(1, &triVao);
-
-        glGenBuffers(1, &vbo);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * size, data, GL_STATIC_DRAW);
-
-        GLint position = glGetAttribLocation(shader, "position");
-        GLint normal = glGetAttribLocation(shader, "normal");
-        GLint offset = glGetAttribLocation(shader, "arrowOffset");
-
-
-        glBindVertexArray(lineVao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-        glEnableVertexAttribArray(position);
-
-        glBindVertexArray(triVao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (void *)(sizeof(GLfloat) * 6 * count));
-        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_TRUE, sizeof(GLfloat) * 6, (void *)(sizeof(GLfloat) * (6 * count + 3)));
-        glVertexAttribPointer(offset, 1, GL_FLOAT, GL_FALSE, 0, (void *)(sizeof(GLfloat) * (6 * count + 18 * count)));
-        glEnableVertexAttribArray(position);
-        glEnableVertexAttribArray(normal);
-        glEnableVertexAttribArray(offset);
-
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        delete[] data;
     }
 
     /** draw the normals */

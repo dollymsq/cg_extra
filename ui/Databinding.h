@@ -142,7 +142,8 @@ class ChoiceBinding : public DataBinding
 public:
     virtual ~ChoiceBinding() {}
 
-    static ChoiceBinding* bindRadioButtons(int numRadioButtons, int &value, ...);
+    static ChoiceBinding* bindRadioButtons(
+            QButtonGroup *buttonGroup, int numRadioButtons, int &value, ...);
     static ChoiceBinding* bindTabs(QTabWidget *tabs, int &value);
 
 private slots:

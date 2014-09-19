@@ -30,7 +30,6 @@ Canvas2D::Canvas2D()
     // @TODO: Initialize any pointers in this class here.
     m_scene = NULL;
 
-
 }
 
 Canvas2D::~Canvas2D()
