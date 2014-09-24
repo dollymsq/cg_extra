@@ -80,6 +80,6 @@ void Torus::generateTriangle()
     m_tList.push_back(i+1);
 
     m_tList.push_back(i+1);
-    m_tList.push_back(1);
+    m_tList.push_back(git1);
     m_tList.push_back((m_p1-1)*m_p2+1);
 }
