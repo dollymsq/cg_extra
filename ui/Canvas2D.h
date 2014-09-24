@@ -3,6 +3,28 @@
 
 #include "SupportCanvas2D.h"
 
+#include <QPainter>
+#include "brush/Brush.h"
+#include "brush/ConstantBrush.h"
+#include "brush/LinearBrush.h"
+#include "brush/QuadraticBrush.h"
+#include "brush/SmudgeBrush.h"
+#include "brush/TubeBrush.h"
+
+#include "filter/Filter.h"
+#include "filter/FInvert.h"
+#include "filter/FGrayScale.h"
+#include "filter/FEdgeDetect.h"
+#include "filter/FBlur.h"
+#include "filter/FScale.h"
+#include "filter/FSharper.h"
+#include "filter/FAutoLevel.h"
+#include "filter/FMedian.h"
+
+#include "camera/Camera.h"
+#include "camera/CamtransCamera.h"
+#include "camera/OrbitingCamera.h"
+
 class RayScene;
 
 class Camera;
@@ -52,6 +74,12 @@ private:
 
     //TODO: [BRUSH, INTERSECT, RAY] Put your member variables here.
 
+    //[BRUSH]
+    Brush *m_b;
+    BGRA *m_canvas_ori;
+    float *m_canvas_tmp;
+    Filter *m_filter;
+    int previousBrush;
 
 };
 

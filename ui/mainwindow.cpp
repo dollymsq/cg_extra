@@ -77,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
     a += ui->brushTypeQuadratic;
     a += ui->brushTypeSmudge;
     a += ui->brushTypeSolid;
-    a += ui->brushTypeSpecial1;
+    a += ui->brushTypeTube;
     a += ui->brushTypeSpecial2;
     a += ui->filterTypeBlur;
     a += ui->filterTypeEdgeDetect;
@@ -136,7 +136,7 @@ void MainWindow::dataBind()
             ui->brushTypeLinear,
             ui->brushTypeQuadratic,
             ui->brushTypeSmudge,
-            ui->brushTypeSpecial1,
+            ui->brushTypeTube,
             ui->brushTypeSpecial2))
 
     BIND(IntBinding::bindSliderAndTextbox(

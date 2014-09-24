@@ -21,16 +21,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_10">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -46,16 +37,7 @@
         <string>2D</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_11">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="0">
@@ -83,8 +65,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>338</width>
-             <height>3061</height>
+             <width>351</width>
+             <height>3052</height>
             </rect>
            </property>
           </widget>
@@ -97,16 +79,7 @@
         <string>3D</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_12">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="0">
@@ -189,9 +162,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="brushTypeSpecial1">
+         <widget class="QRadioButton" name="brushTypeTube">
           <property name="text">
-           <string>Special 1</string>
+           <string>Tube</string>
           </property>
          </widget>
         </item>
@@ -364,16 +337,7 @@
      <item>
       <widget class="QWidget" name="brushRadius" native="true">
        <layout class="QGridLayout" name="gridLayout_6">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="3">
@@ -752,16 +716,7 @@
            <bool>false</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_13">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item row="0" column="0">
@@ -814,16 +769,7 @@
         <item>
          <widget class="QWidget" name="blurRadius" native="true">
           <layout class="QGridLayout" name="gridLayout_8">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item row="0" column="2">
@@ -891,20 +837,11 @@
         <item>
          <widget class="QWidget" name="scale" native="true">
           <layout class="QGridLayout" name="gridLayout_9">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
            <property name="verticalSpacing">
             <number>5</number>
+           </property>
+           <property name="margin">
+            <number>0</number>
            </property>
            <item row="0" column="0">
             <widget class="QLabel" name="scaleLabelX">
@@ -1104,16 +1041,7 @@
      <item>
       <widget class="QWidget" name="rayAllOrNone" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -1515,20 +1443,11 @@
         <item>
          <widget class="QWidget" name="cameraRotation_2" native="true">
           <layout class="QGridLayout" name="gridLayout_15">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
            <property name="verticalSpacing">
             <number>18</number>
+           </property>
+           <property name="margin">
+            <number>0</number>
            </property>
            <item row="0" column="0">
             <widget class="QDial" name="rotU">
@@ -1730,20 +1649,11 @@
      <item>
       <widget class="QWidget" name="cameraFrustum" native="true">
        <layout class="QGridLayout" name="gridLayout_5">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
         <property name="verticalSpacing">
          <number>5</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
         </property>
         <item row="0" column="0">
          <widget class="QLabel" name="cameraFovLabel">
@@ -1895,7 +1805,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -1,14 +1,17 @@
+/*!
+   @file   QuadraticBrush.h
+   @author Ben Herila (ben@herila.net)
+   @author Evan Wallace (evan.exe@gmail.com)
+   @date   Fall 2010
+*/
+
 #ifndef QuadraticBrush_Header
 #define QuadraticBrush_Header
 
 #include "Brush.h"
 
 
-/**
- * @class QuadraticBrush
- *
- * Quadratic brush, whose mask has a falloff of 1/r^2.
- */
+//! This brush should have a mask with $1/r^2$ falloff.
 class QuadraticBrush
     : public Brush
 {
@@ -18,7 +21,7 @@ public:
     virtual ~QuadraticBrush();
 
 protected:
-    void makeMask(); // Constructs the mask for this brush.
+    void makeMask(); /// Constructs the mask for this brush.
 };
 
 #endif

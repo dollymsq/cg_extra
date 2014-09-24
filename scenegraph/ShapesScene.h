@@ -47,6 +47,16 @@ private:
     CS123SceneMaterial   m_material;
 
     GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
+    GLuint vertexBuffer;
+    void instantiateShape();
+
+protected:
+    //for shapes
+    Shape *m_shape;
+    int m_sp1, m_sp2, m_styp;
+    double m_sp3;
+    GLfloat* vertexData;
+    int m_vsize;
 
 };
 

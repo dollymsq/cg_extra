@@ -19,23 +19,26 @@
 
 
 #include <QPainter>
-#include "brush/Brush.h"
-#include "brush/ConstantBrush.h"
-#include "brush/LinearBrush.h"
-#include "brush/QuadraticBrush.h"
-#include "brush/SmudgeBrush.h"
 
 Canvas2D::Canvas2D()
 {
     // @TODO: Initialize any pointers in this class here.
     m_scene = NULL;
-
+    m_b = NULL;
+    m_canvas_ori = NULL;
+    m_canvas_tmp = NULL;
+    m_filter = NULL;
 }
 
 Canvas2D::~Canvas2D()
 {
     // @TODO: Be sure to release all memory that you allocate.
-    delete m_scene;
+    if (m_scene != NULL)
+        delete m_scene;
+    if (m_b != NULL)
+        delete m_b;
+    if (m_filter != NULL)
+        delete m_filter;
 
 }
 
@@ -78,18 +81,113 @@ void Canvas2D::mouseDown(int x, int y)
 
     bool fixAlphaBlending = settings.fixAlphaBlending; // for extra/half credit
 
+    if(m_b == NULL)
+    {
+        switch(currentBrush)
+        {
+        case BRUSH_SOLID:
+            m_b = new ConstantBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case BRUSH_LINEAR:
+            m_b = new LinearBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case BRUSH_QUADRATIC:
+            m_b = new QuadraticBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case BRUSH_SMUDGE:
+            m_b = new SmudgeBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case BRUSH_TUBE:
+            m_b = new TubeBrush(currentColor, currentFlow, currentRadius);
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        if(fixAlphaBlending)
+        {
+            int size = width() * height();
+            m_canvas_ori = new BGRA[size];
+            m_canvas_tmp = new float[size];
+            memcpy(m_canvas_ori, data(), size * sizeof(int));// the original state of the the canvas before the stroke
+            memset(m_canvas_tmp, 0, size * sizeof(int));
+            m_b->paintOnCanvasTmp(x, y, this, m_canvas_tmp);
+            m_b->paintOnce(x,y,this);
+        }
+        else
+        {
+            if(currentBrush != BRUSH_SMUDGE)
+                m_b->paintOnce(x, y, this);
+        }
+
+    }
+
 }
 
 void Canvas2D::mouseDragged(int x, int y)
 {
     // TODO: [BRUSH] Mouse interaction for Brush.
+    if(settings.fixAlphaBlending)
+    {
+        switch(settings.brushType)
+        {
+        case(BRUSH_SOLID):
+
+        case(BRUSH_LINEAR):
+
+        case(BRUSH_QUADRATIC):
+            m_b->paintOnCanvasTmp(x, y, this, m_canvas_tmp);
+            m_b->fixAlphaBlendingF(this, m_canvas_ori, m_canvas_tmp);
+            break;
+        case(BRUSH_TUBE):
+
+        case(BRUSH_SMUDGE):
+            m_b->paintOnce(x, y, this);
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        switch(settings.brushType)
+        {
+        case(BRUSH_SOLID):
+
+        case(BRUSH_LINEAR):
+
+        case(BRUSH_QUADRATIC):
+
+        case(BRUSH_TUBE):
+
+        case(BRUSH_SMUDGE):
+            m_b->paintOnce(x, y, this);
+            break;
+        default:
+            break;
+        }
+    }
 
 }
 
 void Canvas2D::mouseUp(int x, int y)
 {
     // TODO: [BRUSH] Mouse interaction for Brush.
-
+    previousBrush = settings.brushType;
+    if(!settings.fixAlphaBlending)
+    {}
+    else
+    {
+        if (m_canvas_ori != NULL)
+        {
+            delete[] m_canvas_ori;
+            delete[] m_canvas_tmp;
+        }
+    }
+    if(settings.brushType == BRUSH_SMUDGE)
+        m_b->clearPaint();
 }
 
 
@@ -104,11 +202,47 @@ void Canvas2D::filterImage()
 
     switch (settings.filterType) {
     case FILTER_BLUR:
-        // ...
+        m_filter = new FBlur();
+        m_filter->setBlurRadius(settings.blurRadius);
+        break;
+    case FILTER_INVERT:
+        m_filter = new FInvert();
+        break;
+    case FILTER_GRAYSCALE:
+        m_filter = new FGrayScale();
+        break;
+    case FILTER_EDGE_DETECT:
+        m_filter = new FEdgeDetect();
+        m_filter->setThreshold(settings.edgeDetectThreshold);
+        break;
+    case FILTER_SCALE:
+        m_filter = new FScale();
+        m_filter->setScaleXnY(settings.scaleX, settings.scaleY);
+        break;
+    case FILTER_SPECIAL_1:
+        m_filter = new FMedian();
+        break;
+    case FILTER_SPECIAL_2:
+        m_filter = new FSharper();
+        break;
+    case FILTER_SPECIAL_3:
+        m_filter = new FAutoLevel();
+        break;
+    default:
+        //to be continued;
+        m_filter = NULL;
         break;
         // fill in the rest
     }
-
+    if(m_filter!= NULL)
+    {
+        m_filter->setRegionParameter(this);//set the region to handle
+        m_filter->doFilter(this->data());
+    }
+    //external handling of special filter
+    if(settings.filterType == FILTER_SCALE)
+        m_filter->setCanvas(this);
+    update();
 }
 
 void Canvas2D::setScene(RayScene *scene)
@@ -141,5 +275,62 @@ void Canvas2D::cancelRender()
 void Canvas2D::settingsChanged() {
 
     // TODO: Process changes to the application settings.
+    int currentBrush = settings.brushType;
+    int currentRadius = settings.brushRadius;
 
+    BGRA currentColor;
+    currentColor.b = settings.brushBlue;
+    currentColor.g = settings.brushGreen;
+    currentColor.r = settings.brushRed;
+    currentColor.a = 255;
+
+    int currentFlow = settings.brushAlpha;
+
+    if(m_b != NULL && previousBrush != currentBrush)
+    {
+        delete m_b;
+        m_b = NULL;
+    }
+    if(m_b == NULL)
+    {
+        switch(currentBrush)
+        {
+        case(BRUSH_SOLID):
+            m_b = new ConstantBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case(BRUSH_LINEAR):
+            m_b = new LinearBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case(BRUSH_QUADRATIC):
+            m_b = new QuadraticBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case(BRUSH_SMUDGE):
+            m_b = new SmudgeBrush(currentColor, currentFlow, currentRadius);
+            break;
+        case(BRUSH_TUBE):
+            m_b = new TubeBrush(currentColor, currentFlow, currentRadius);
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        if(currentBrush == BRUSH_SMUDGE)
+        {
+            m_b->setFlow(currentFlow);
+            m_b->setRadius(currentRadius);
+        }
+        else
+        {
+            if(currentBrush == BRUSH_TUBE)
+                m_b->clearPaint();
+            m_b->setBlue(currentColor.b);
+            m_b->setGreen(currentColor.g);
+            m_b->setRed(currentColor.r);
+            m_b->setRadius(currentRadius);
+            m_b->setFlow(currentFlow);
+        }
+    }
+    previousBrush = currentBrush;
 }

@@ -34,7 +34,26 @@ SOURCES += brush/SmudgeBrush.cpp \
     ui/Databinding.cpp \
     ui/Canvas3D.cpp \
     ui/Canvas2D.cpp \
-    main.cpp
+    main.cpp \
+    brush/TubeBrush.cpp \
+    shape/Sphere.cpp \
+    shape/Shape.cpp \
+    shape/Cylinder.cpp \
+    shape/Cube.cpp \
+    shape/Cone.cpp \
+    filter/Filter.cpp \
+    filter/FSharper.cpp \
+    filter/FScale.cpp \
+    filter/FMedian.cpp \
+    filter/FInvert.cpp \
+    filter/FGrayScale.cpp \
+    filter/FEdgeDetect.cpp \
+    filter/FBlur.cpp \
+    filter/FAutoLevel.cpp \
+    math/CS123Vector.inl \
+    math/CS123Matrix.inl \
+    math/CS123Matrix.cpp \
+    shape/Torus.cpp
 
 
 HEADERS += brush/SmudgeBrush.h \
@@ -63,7 +82,24 @@ HEADERS += brush/SmudgeBrush.h \
     ui/Databinding.h \
     ui/Canvas3D.h \
     ui/Canvas2D.h \
-    ui_mainwindow.h
+    ui_mainwindow.h \
+    brush/TubeBrush.h \
+    shape/Sphere.h \
+    shape/Shape.h \
+    shape/Cylinder.h \
+    shape/Cube.h \
+    shape/Cone.h \
+    filter/Filter.h \
+    filter/FSharper.h \
+    filter/FScale.h \
+    filter/FMedian.h \
+    filter/FInvert.h \
+    filter/FGrayScale.h \
+    filter/FEdgeDetect.h \
+    filter/FBlur.h \
+    filter/FAutoLevel.h \
+    math/CS123Algebra.h \
+    shape/Torus.h
 
 
 FORMS += ui/mainwindow.ui
