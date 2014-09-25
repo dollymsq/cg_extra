@@ -9,6 +9,7 @@
 #include "shape/Sphere.h"
 #include "shape/Cylinder.h"
 #include "shape/Torus.h"
+#include "shape/Fractal.h"
 
 class Camera;
 class CS123ISceneParser;

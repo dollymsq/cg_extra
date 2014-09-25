@@ -20,7 +20,7 @@ void Torus::generatePoints()
 
     int i, j;
 
-    //bottom of sphere
+    //body of torus
     m_pList.push_back(Vector4(0, -0.5, 0, 1.0));
     m_nList.push_back(Vector4(0, -1, 0, 0));
 
@@ -41,7 +41,7 @@ void Torus::generatePoints()
 
 void Torus::generateTriangle()
 {
-    //body of sphere
+    //body of torus
     int i, j;
     for(i = 0; i < m_p1-1; i++)
     {

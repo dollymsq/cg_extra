@@ -23,7 +23,7 @@ public:
 
     REAL virtual calculateIntersecP(Vector3 &tnormal, Vector2 &tex) { return 0.0;}
 
-    int getVerticesNumber();
+    int virtual getVerticesNumber();
 
     std::deque<Vector4> m_pList; //store points
     std::deque<Vector4> m_nList; //store normals

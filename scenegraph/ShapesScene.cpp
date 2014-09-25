@@ -127,6 +127,9 @@ void ShapesScene::instantiateShape()
             case SHAPE_TORUS:
                 m_shape = new Torus(m_sp1, m_sp2, m_sp3);
                 break;
+            case SHAPE_FRACTAL:
+                m_shape = new Fractal(m_sp1, m_sp2, m_sp3);
+                break;
             default:
                 break;
         }
