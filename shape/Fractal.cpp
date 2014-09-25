@@ -7,12 +7,6 @@ Fractal::Fractal(int p1, int p2, double p3)
     generatePoints();
 }
 
-Fractal::~Fractal()
-{
-    m_pList.clear();
-    m_nList.clear();
-}
-
 void Fractal::generatePoints()
 {
     Vector4 up(0, 0.5, sqrt(2)/4, 1);
@@ -26,19 +20,6 @@ void Fractal::generatePoints()
     normal4 = (left-down).cross(right-down).getNormalized();
 
     generatePoints_helper(up, down, left, right, m_p1);
-
-
-
-//    m_pList.push_back(up);m_pList.push_back(down);m_pList.push_back(right);
-//    m_pList.push_back(up);m_pList.push_back(right);m_pList.push_back(left);
-//    m_pList.push_back(up);m_pList.push_back(left);m_pList.push_back(down);
-//    m_pList.push_back(left);m_pList.push_back(right);m_pList.push_back(down);
-
-//    m_nList.push_back(normal1);m_nList.push_back(normal1);m_nList.push_back(normal1);
-//    m_nList.push_back(normal2);m_nList.push_back(normal2);m_nList.push_back(normal2);
-//    m_nList.push_back(normal3);m_nList.push_back(normal3);m_nList.push_back(normal3);
-//    m_nList.push_back(normal4);m_nList.push_back(normal4);m_nList.push_back(normal4);
-
 }
 
 void Fractal::generatePoints_helper(Vector4 up, Vector4 down, Vector4 left, Vector4 right, int level)
@@ -65,7 +46,7 @@ void Fractal::generatePoints_helper(Vector4 up, Vector4 down, Vector4 left, Vect
 
 }
 
-void Fractal::drawShape(GLfloat *vertexData)
+void Fractal::drawShape()
 {
     int i, j;
     for( i = 0, j = 0; i < m_pList.size(); i = i+3, j++)

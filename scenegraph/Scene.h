@@ -3,13 +3,7 @@
 
 #include <CS123Common.h>
 #include "CS123SceneData.h"
-#include "shape/Shape.h"
-#include "shape/Cube.h"
-#include "shape/Cone.h"
-#include "shape/Sphere.h"
-#include "shape/Cylinder.h"
-#include "shape/Torus.h"
-#include "shape/Fractal.h"
+
 
 class Camera;
 class CS123ISceneParser;
