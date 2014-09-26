@@ -1,7 +1,6 @@
 #ifndef TUBEBRUSH_H
 #define TUBEBRUSH_H
 #include "Brush.h"
-#include "math/CS123Algebra.h"
 
 // This is a brush mimicking the texture and light diffusion of a tube brush stroke
 

@@ -67,11 +67,11 @@ void TubeBrush::makeBrushTip()
                 h = sqrt(m_radius * m_radius - d*d);
                 currentpos = Vector3(colcounter - m_radius, h, rowcounter - m_radius);
                 lightray = light - currentpos;
-                lightray.normalize();
-                n = currentpos.getNormalized();
-                dotproduct = max(lightray.dot(n), 0.0);
+                lightray = glm::normalize(lightray);
+                n = glm::normalize(currentpos);
+                dotproduct = max(glm::dot(lightray, n), 0.0f);
 
-                coeff = max(lightray.dot(n), 0.0)*kd + ka/8.0;
+                coeff = max(glm::dot(lightray, n), 0.0f)*kd + ka/8.0;
                 m_distri[rowcounter * len + colcounter].b = coeff *m_color.b;
                 m_distri[rowcounter * len + colcounter].g = coeff *m_color.g;
                 m_distri[rowcounter * len + colcounter].r = coeff *m_color.r;

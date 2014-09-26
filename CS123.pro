@@ -50,10 +50,8 @@ SOURCES += brush/SmudgeBrush.cpp \
     filter/FEdgeDetect.cpp \
     filter/FBlur.cpp \
     filter/FAutoLevel.cpp \
-    math/CS123Vector.inl \
-    math/CS123Matrix.inl \
-    math/CS123Matrix.cpp \
-    shape/Torus.cpp
+    shape/Torus.cpp \
+    shape/Fractal.cpp
 
 
 HEADERS += brush/SmudgeBrush.h \
@@ -98,8 +96,8 @@ HEADERS += brush/SmudgeBrush.h \
     filter/FEdgeDetect.h \
     filter/FBlur.h \
     filter/FAutoLevel.h \
-    math/CS123Algebra.h \
-    shape/Torus.h
+    shape/Torus.h \
+    shape/Fractal.h
 
 
 FORMS += ui/mainwindow.ui

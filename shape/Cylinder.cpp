@@ -3,17 +3,10 @@
 Cylinder::Cylinder(int p1, int p2, double p3)
     :Shape(p1, p2, p3)
 {
-//    m_p2 = 4;
-    if(m_p2 < 3)
-        m_p2 = 3;
+    m_p2 = max(3, m_p2);
     generatePoints();
     generateTriangle();
 
-}
-
-Cylinder::Cylinder(Vector4 pp, Vector4 dd)
-    :Shape(pp, dd)
-{
 }
 
 void Cylinder::generatePoints()
@@ -25,8 +18,8 @@ void Cylinder::generatePoints()
     int i, j;
 
     //bottom of cone, from inner to outside
-    m_pList.push_back(Vector4(0.0, -0.5, 0, 1.0));
-    m_nList.push_back(Vector4(0, -1, 0, 0));
+    m_pList.push_back(Vector3(0.0, -0.5, 0));
+    m_nList.push_back(Vector3(0, -1, 0));
     for(i = 1; i< m_p1+1; i++)
     {
         u = delta_u * i;
@@ -36,8 +29,8 @@ void Cylinder::generatePoints()
             x = 0.5*u * sin(2*M_PI*v);
             z = 0.5*u * cos(2*M_PI*v);
             y = -0.5;
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(0, -1, 0, 0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(0, -1, 0));
         }
     }
 
@@ -46,7 +39,7 @@ void Cylinder::generatePoints()
    {
         v = delta_v * j;
        m_pList.push_back(*it);
-       m_nList.push_back(Vector4(sin(2*M_PI*v), 0, cos(2*M_PI*v),0));
+       m_nList.push_back(Vector3(sin(2*M_PI*v), 0, cos(2*M_PI*v)));
    }
 
     //side
@@ -59,8 +52,8 @@ void Cylinder::generatePoints()
             v = delta_v * j;
             x = 0.5 * sin(2*M_PI*v);
             z = 0.5 * cos(2*M_PI*v);
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(sin(2*M_PI*v), 0, cos(2*M_PI*v),0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(sin(2*M_PI*v), 0, cos(2*M_PI*v)));
         }
     }
 
@@ -69,7 +62,7 @@ void Cylinder::generatePoints()
     {
          v = delta_v * j;
         m_pList.push_back(*it);
-        m_nList.push_back(Vector4(0, 1, 0, 0));
+        m_nList.push_back(Vector3(0, 1, 0));
     }
 
     //top from the second biggest circle
@@ -82,12 +75,12 @@ void Cylinder::generatePoints()
             x = 0.5*(1-u) * sin(2*M_PI*v);
             z = 0.5*(1-u) * cos(2*M_PI*v);
             y = 0.5;
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(0, 1, 0, 0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(0, 1, 0));
         }
     }
-    m_pList.push_back(Vector4(0, 0.5, 0, 1.0));
-    m_nList.push_back(Vector4(0, 1, 0, 0));
+    m_pList.push_back(Vector3(0, 0.5, 0));
+    m_nList.push_back(Vector3(0, 1, 0));
 
 }
 
@@ -109,7 +102,6 @@ void Cylinder::generateTriangle()
     //the layers in bottom, side, and up
 
     for(i = 0; i < 3*m_p1; i++)
-//    for(i = 0; i< m_p1-1; i++)
     {
         if(i == m_p1-1)
             continue;
@@ -135,7 +127,6 @@ void Cylinder::generateTriangle()
     }
 
     //top the most inner part
-
     for(i = 1; i < m_p2; i++)
     {
         m_tList.push_back(3*m_p1*m_p2+i);
@@ -147,7 +138,7 @@ void Cylinder::generateTriangle()
     m_tList.push_back((3*m_p1+1)*m_p2+1);
 }
 
-REAL Cylinder::calculateIntersecP(Vector3 &tnormal, vec2<REAL> &tex)
+REAL Cylinder::calculateIntersecP(Vector3 &tnormal, Vector2 &tex)
 {
         REAL tmpt, tmin = MAX_LIMIT, t1=-1, t2=-1;
         //body
@@ -159,12 +150,12 @@ REAL Cylinder::calculateIntersecP(Vector3 &tnormal, vec2<REAL> &tex)
         getEquationRoot(a, b, c, t1, t2);
 
         n = Vector3(p.x + t1*d.x, 0, p.z + t1*d.z);
-        n.normalize();
+        n = glm::normalize(n);
         checkBodyBoundary(t1, tmin, n, tnormal);
         if(t1!=t2)
         {
             n = Vector3(p.x + t2*d.x, 0, p.z + t2*d.z);
-            n.normalize();
+            n = glm::normalize(n);
             checkBodyBoundary(t2, tmin, n, tnormal);
         }
 

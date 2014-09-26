@@ -15,14 +15,14 @@ void Torus::generatePoints()
     float delta_u = 1.0 / (float)m_p1;
     float delta_v = 1.0 / (float)m_p2;
     float u, v, x, y, z, R, r;
-    R = 0.5 * (1- m_p3);
+    R = 0.5 * (1 - m_p3);
     r = 0.5 * m_p3;
 
     int i, j;
 
-    //bottom of sphere
-    m_pList.push_back(Vector4(0, -0.5, 0, 1.0));
-    m_nList.push_back(Vector4(0, -1, 0, 0));
+    //body of torus
+    m_pList.push_back(Vector3(0, -0.5, 0));
+    m_nList.push_back(Vector3(0, -1, 0));
 
     for(i = 0; i< m_p1; i++)
     {
@@ -33,15 +33,15 @@ void Torus::generatePoints()
             x = (R +  r * cos(2*M_PI*v)) * cos(2*M_PI*u);
             y = (R +  r * cos(2*M_PI*v)) * sin(2*M_PI*u);
             z = r * sin(2 * M_PI*v);
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(cos(2*M_PI*v) * cos(2*M_PI*u), cos(2*M_PI*v) * sin(2*M_PI*u), sin(2 * M_PI*v), 0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(cos(2*M_PI*v) * cos(2*M_PI*u), cos(2*M_PI*v) * sin(2*M_PI*u), sin(2 * M_PI*v)));
         }
     }
 }
 
 void Torus::generateTriangle()
 {
-    //body of sphere
+    //body of torus
     int i, j;
     for(i = 0; i < m_p1-1; i++)
     {

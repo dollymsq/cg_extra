@@ -482,7 +482,7 @@ namespace detail
 	typedef highp_uvec4			uvec4;
 #endif//GLM_PRECISION
 	
-	//////////////////////////
+    ///////////////////////////2
 	// Boolean definition
 
 #if(defined(GLM_PRECISION_LOWP_BOOL))

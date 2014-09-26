@@ -3,18 +3,10 @@
 Sphere::Sphere(int p1, int p2, double p3)
     :Shape(p1, p2, p3)
 {
-    if(m_p1 < 2)
-        m_p1 = 2;
-    if(m_p2 < 3)
-        m_p2 = 3;
+    m_p1 = max(2, m_p1);
+    m_p2 = max(3, m_p2);
     generatePoints();
     generateTriangle();
-
-}
-
-Sphere::Sphere(Vector4 pp, Vector4 dd)
-    :Shape(pp, dd)
-{
 }
 
 void Sphere::generatePoints()
@@ -26,8 +18,8 @@ void Sphere::generatePoints()
     int i, j;
 
     //bottom of sphere
-    m_pList.push_back(Vector4(0, -0.5, 0, 1.0));
-    m_nList.push_back(Vector4(0, -1, 0, 0));
+    m_pList.push_back(Vector3(0, -0.5, 0));
+    m_nList.push_back(Vector3(0, -1, 0));
 
     for(i = 1; i< m_p1; i++)
     {
@@ -38,13 +30,13 @@ void Sphere::generatePoints()
             x = 0.5 * sin(M_PI*u) * cos(2*M_PI*v);
             y = -0.5 * cos(M_PI*u);
             z = -0.5 * sin(M_PI*u) * sin(2*M_PI*v);
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(2*x, 2*y, 2*z, 0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(2*x, 2*y, 2*z));
         }
     }
 
-    m_pList.push_back(Vector4(0, 0.5, 0, 1.0));
-    m_nList.push_back(Vector4(0, 1, 0, 0));
+    m_pList.push_back(Vector3(0, 0.5, 0));
+    m_nList.push_back(Vector3(0, 1, 0));
 }
 
 void Sphere::generateTriangle()
@@ -62,7 +54,6 @@ void Sphere::generateTriangle()
     m_tList.push_back(1);
 
     //body of sphere
-//    it = m_pList.begin()+1;
     for(i = 0; i < m_p1-2; i++)
     {
         for(j = 0; j < m_p2-1 ; j ++)
@@ -85,7 +76,6 @@ void Sphere::generateTriangle()
     }
 
     //top
-//    it = m_pList.begin() + (m_p1-2)*m_p2 + 1;
     for(i = 0; i < m_p2-1; i++)
     {
         m_tList.push_back((m_p1-2)*m_p2 + 1+i);
@@ -97,7 +87,7 @@ void Sphere::generateTriangle()
     m_tList.push_back((m_p1-2)*m_p2 + 1 +m_p2);
 }
 
-REAL Sphere::calculateIntersecP(Vector3 &tnormal, vec2<REAL> &tex)
+REAL Sphere::calculateIntersecP(Vector3 &tnormal, Vector2 &tex)
 {
         REAL tmin = MAX_LIMIT, t1=-1, t2=-1 ;
 

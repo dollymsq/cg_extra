@@ -219,7 +219,7 @@ void Canvas2D::filterImage()
         m_filter = new FScale();
         m_filter->setScaleXnY(settings.scaleX, settings.scaleY);
         break;
-    case FILTER_SPECIAL_1:
+    case FILTER_MEDIAN:
         m_filter = new FMedian();
         break;
     case FILTER_SPECIAL_2:

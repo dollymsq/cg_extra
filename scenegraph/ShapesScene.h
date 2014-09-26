@@ -3,6 +3,13 @@
 
 #include "OpenGLScene.h"
 #include "Settings.h"
+#include "shape/Shape.h"
+#include "shape/Cube.h"
+#include "shape/Cone.h"
+#include "shape/Sphere.h"
+#include "shape/Cylinder.h"
+#include "shape/Torus.h"
+#include "shape/Fractal.h"
 
 
 /**
@@ -55,7 +62,6 @@ protected:
     Shape *m_shape;
     int m_sp1, m_sp2, m_styp;
     double m_sp3;
-    GLfloat* vertexData;
     int m_vsize;
 
 };

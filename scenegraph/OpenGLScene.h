@@ -184,6 +184,9 @@ public:
     // Renders arrows for the normals that were initialized using initNormals(...).
     void renderNormals();
 
+    NormalRenderer *m_normalRenderer;
+
+
 protected:
     // Set all lights to black.
     void clearLights();
@@ -205,7 +208,6 @@ protected:
     GLuint m_shader;
 
     // The normal renderer, which can be used to render arrows for each normal in Shapes.
-    NormalRenderer *m_normalRenderer;
 
 private:
 

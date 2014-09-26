@@ -65,8 +65,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>351</width>
-             <height>3052</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
           </widget>
@@ -477,7 +477,7 @@
         <item>
          <widget class="QRadioButton" name="shapeTypeSpecial1">
           <property name="text">
-           <string>Special 1</string>
+           <string>Fractal</string>
           </property>
          </widget>
         </item>
@@ -988,7 +988,7 @@
         <item>
          <widget class="QRadioButton" name="filterTypeSpecial1">
           <property name="text">
-           <string>Special 1</string>
+           <string>Median</string>
           </property>
          </widget>
         </item>

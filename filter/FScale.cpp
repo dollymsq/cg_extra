@@ -130,7 +130,6 @@ void FScale::scaleImageY(BGRA *dst, BGRA* src, int curWidth, int curHeight)
             delete[] w;
         }
     }
-    //    memcpy(&dst[0], &midcpy[0],aftWidth*aftHeight*sizeof(BGRA));
 }
 
 void FScale::getWeightNnormalized(REAL *w, int start, int end, REAL wedge, REAL len)

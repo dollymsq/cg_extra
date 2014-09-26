@@ -3,15 +3,9 @@
 Cone::Cone(int p1, int p2, double p3)
     :Shape(p1, p2, p3)
 {
-    if(m_p2 < 3)
-        m_p2 = 3;
+    m_p2 = max(3, m_p2);
     generatePoints();
     generateTriangle();
-}
-
-Cone::Cone(Vector4 pp, Vector4 dd)
-    :Shape(pp, dd)
-{
 }
 
 void Cone::generatePoints()
@@ -23,8 +17,8 @@ void Cone::generatePoints()
     int i, j;
 
     //bottom of cone, from inner to outside
-    m_pList.push_back(Vector4(0.0, -0.5, 0.0 , 1.0));
-    m_nList.push_back(Vector4(0, -1, 0, 0));
+    m_pList.push_back(Vector3(0.0, -0.5, 0.0));
+    m_nList.push_back(Vector3(0, -1, 0));
     for(i = 1; i< m_p1+1; i++)
     {
         u = delta_u * i;
@@ -34,8 +28,8 @@ void Cone::generatePoints()
             x = 0.5*u * sin(2*M_PI*v);
             z = 0.5*u * cos(2*M_PI*v);
             y = -0.5;
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(0, -1, 0, 0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(0, -1, 0));
         }
     }
 
@@ -44,7 +38,7 @@ void Cone::generatePoints()
     {
          v = delta_v * j;
         m_pList.push_back(*it);
-        m_nList.push_back(Vector4(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v),0));
+        m_nList.push_back(Vector3(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v)));
     }
 
     //side
@@ -57,13 +51,13 @@ void Cone::generatePoints()
             v = delta_v * j;
             x = (1-u)/2 * sin(2*M_PI*v);
             z = (1-u)/2 * cos(2*M_PI*v);
-            m_pList.push_back(Vector4(x, y, z, 1.0));
-            m_nList.push_back(Vector4(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v),0));
+            m_pList.push_back(Vector3(x, y, z));
+            m_nList.push_back(Vector3(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v)));
         }
     }
 
     //top
-    Vector4 Vtip(0, 0.5, 0, 1), v1, v2, Vtipnormal;//to calculate normals on top
+    Vector3 Vtip(0, 0.5, 0), v1, v2, Vtipnormal;//to calculate normals on top
 
     //duplicate of top
     it = m_nList.end()-m_p2;
@@ -72,13 +66,13 @@ void Cone::generatePoints()
         v = delta_v * j;
         x = 0.5 * sin(2*M_PI*v);
         z = 0.5 * cos(2*M_PI*v);
-        v1 = Vector4(x, -0.5, z, 1.0);
+        v1 = Vector3(x, -0.5, z);
         v1 = Vtip - v1;
 
         v = delta_v * (j+1);
         x = 0.5 * sin(2*M_PI*v);
         z = 0.5 * cos(2*M_PI*v);
-        v2 = Vector4(x, -0.5, z, 1.0);
+        v2 = Vector3(x, -0.5, z);
         v2 = Vtip - v2;
 
             //  cross product
@@ -86,7 +80,7 @@ void Cone::generatePoints()
         Vtipnormal.y = v1.z*v2.x - v1.x*v2.z;
         Vtipnormal.z = v1.x*v2.y - v1.y*v2.x;
 
-        Vtipnormal.normalize();
+        Vtipnormal = glm::normalize(Vtipnormal);
         m_pList.push_back(Vtip);
         m_nList.push_back(Vtipnormal);
     }
@@ -145,7 +139,7 @@ void Cone::generateTriangle()
     m_tList.push_back((2*m_p1-1)*m_p2 +1+m_p2+i);
 }
 
-REAL Cone::calculateIntersecP(Vector3 &tnormal, vec2<REAL> &tex)
+REAL Cone::calculateIntersecP(Vector3 &tnormal, Vector2 &tex)
 {
         REAL tmpt, tmin = MAX_LIMIT, t1=-1, t2=-1;
         //body
@@ -159,13 +153,13 @@ REAL Cone::calculateIntersecP(Vector3 &tnormal, vec2<REAL> &tex)
 
         x = p.x + t1*d.x; z = p.z + t1*d.z;
         n.x = x; n.y = sqrt(x*x + z*z)/2; n.z = z;
-        n.normalize();
+        n = glm::normalize(n);
         checkBodyBoundary(t1, tmin, n, tnormal);
         if(t1!=t2)
         {
             x = p.x + t2*d.x; z = p.z + t2*d.z;
             n.x = x; n.y = sqrt(x*x + z*z)/2; n.z = z;
-            n.normalize();
+            n = glm::normalize(n);
             checkBodyBoundary(t2, tmin, n, tnormal);
         }
 
