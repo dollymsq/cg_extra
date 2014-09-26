@@ -11,7 +11,7 @@
 
 */
 
-#include <iostream>
+//#include <iostream>
 #include <CS123Common.h>
 
 #include "SmudgeBrush.h"
