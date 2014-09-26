@@ -988,7 +988,7 @@
         <item>
          <widget class="QRadioButton" name="filterTypeSpecial1">
           <property name="text">
-           <string>Special 1</string>
+           <string>Median</string>
           </property>
          </widget>
         </item>

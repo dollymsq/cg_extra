@@ -9,12 +9,12 @@ public:
 
 protected:
     void generatePoints();
-    void generatePoints_helper(Vector4 up, Vector4 down, Vector4 left, Vector4 right, int level);
+    void generatePoints_helper(Vector3 up, Vector3 down, Vector3 left, Vector3 right, int level);
 
     void drawShape();
     int getVerticesNumber();
 
-    Vector4 normal1, normal2, normal3, normal4;
+    Vector3 normal1, normal2, normal3, normal4;
 };
 
 #endif // FRACTAL_H

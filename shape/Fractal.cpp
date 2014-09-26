@@ -9,20 +9,20 @@ Fractal::Fractal(int p1, int p2, double p3)
 
 void Fractal::generatePoints()
 {
-    Vector4 up(0, 0.5, sqrt(2)/4, 1);
-    Vector4 down(0, -0.5, sqrt(2)/4, 1);
-    Vector4 left(-0.5, 0, -sqrt(2)/4, 1);
-    Vector4 right(0.5, 0, -sqrt(2)/4, 1);
+    Vector3 up(0, 0.5, sqrt(2)/4);
+    Vector3 down(0, -0.5, sqrt(2)/4);
+    Vector3 left(-0.5, 0, -sqrt(2)/4);
+    Vector3 right(0.5, 0, -sqrt(2)/4);
 
-    normal1 = (right-down).cross(up-down).getNormalized();
-    normal2 = (left-right).cross(up-right).getNormalized();
-    normal3 = (down-left).cross(up-left).getNormalized();
-    normal4 = (left-down).cross(right-down).getNormalized();
+    normal1 = glm::cross(right-down, up-down);
+    normal2 = glm::cross(left-right, up-right);
+    normal3 = glm::cross(down-left, up-left);
+    normal4 = glm::cross(left-down, right-down);
 
     generatePoints_helper(up, down, left, right, m_p1);
 }
 
-void Fractal::generatePoints_helper(Vector4 up, Vector4 down, Vector4 left, Vector4 right, int level)
+void Fractal::generatePoints_helper(Vector3 up, Vector3 down, Vector3 left, Vector3 right, int level)
 {
     if(level == 0)
     {
@@ -38,10 +38,10 @@ void Fractal::generatePoints_helper(Vector4 up, Vector4 down, Vector4 left, Vect
     }
     else
     {
-        generatePoints_helper(up, (up + down)/2, (up + left)/2, (up + right)/2, level-1);
-        generatePoints_helper((up + down)/2, down, (left + down)/2, (right + down)/2, level-1);
-        generatePoints_helper((up + left)/2, (left + down)/2, left, (left + right)/2, level-1);
-        generatePoints_helper((up + right)/2, (right + down)/2, (right + left)/2, right, level-1);
+        generatePoints_helper(up, (up + down)/2.0f, (up + left)/2.0f, (up + right)/2.0f, level-1);
+        generatePoints_helper((up + down)/2.0f, down, (left + down)/2.0f, (right + down)/2.0f, level-1);
+        generatePoints_helper((up + left)/2.0f, (left + down)/2.0f, left, (left + right)/2.0f, level-1);
+        generatePoints_helper((up + right)/2.0f, (right + down)/2.0f, (right + left)/2.0f, right, level-1);
     }
 
 }
@@ -52,19 +52,19 @@ void Fractal::drawShape()
     for( i = 0, j = 0; i < m_pList.size(); i = i+3, j++)
     {
         it = m_pList.begin() + i;
-        Vector4 v1 = *it;
+        Vector3 v1 = *it;
         it = m_nList.begin() + i;
-        Vector4 n1 = *it;
+        Vector3 n1 = *it;
 
         it = m_pList.begin() + i+1;
-        Vector4 v2 = *it;
+        Vector3 v2 = *it;
         it = m_nList.begin() + i+1;
-        Vector4 n2 = *it;
+        Vector3 n2 = *it;
 
         it = m_pList.begin() + i+2;
-        Vector4 v3 = *it;
+        Vector3 v3 = *it;
         it = m_nList.begin() + i+2;
-        Vector4 n3 = *it;
+        Vector3 n3 = *it;
 
         vertexData[18*j + 0] = float(v1.x); vertexData[18*j + 1] = float(v1.y); vertexData[18*j + 2] = float(v1.z);
         vertexData[18*j + 3] = float(n1.x); vertexData[18*j + 4] = float(n1.y); vertexData[18*j + 5] = float(n1.z);

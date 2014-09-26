@@ -7,7 +7,6 @@ class Sphere : public Shape
 {
 public:
     Sphere(int p1, int p2, double p3);
-    Sphere(Vector4 pp, Vector4 dd);
 
 protected:
     void generatePoints();

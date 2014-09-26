@@ -27,19 +27,19 @@ Shape::~Shape()
 void Shape::drawTriangle(int offset1, int offset2, int offset3, int j)
 {
     it = m_pList.begin() + offset1;
-    Vector4 v1 = *it;
+    Vector3 v1 = *it;
     it = m_nList.begin() + offset1;
-    Vector4 n1 = *it;
+    Vector3 n1 = *it;
 
     it = m_pList.begin() + offset2;
-    Vector4 v2 = *it;
+    Vector3 v2 = *it;
     it = m_nList.begin() + offset2;
-    Vector4 n2 = *it;
+    Vector3 n2 = *it;
 
     it = m_pList.begin() + offset3;
-    Vector4 v3 = *it;
+    Vector3 v3 = *it;
     it = m_nList.begin() + offset3;
-    Vector4 n3 = *it;
+    Vector3 n3 = *it;
 
     vertexData[18*j + 0] = float(v1.x); vertexData[18*j + 1] = float(v1.y); vertexData[18*j + 2] = float(v1.z);
     vertexData[18*j + 3] = float(n1.x); vertexData[18*j + 4] = float(n1.y); vertexData[18*j + 5] = float(n1.z);
@@ -60,7 +60,7 @@ void Shape::drawShape()
     }
 }
 
-REAL Shape::calculateCapItsP(vec3<REAL> n, vec3<REAL> p0)
+REAL Shape::calculateCapItsP(Vector3 n, Vector3 p0)
 {
     return ((n.x*p0.x + n.y*p0.y+n.z*p0.z) - (n.x*p.x + n.y*p.y + n.z*p.z))/(n.x*d.x + n.y*d.y + n.z*d.z);
 }
@@ -76,7 +76,7 @@ void Shape::getEquationRoot(REAL a, REAL b, REAL c, REAL &t1, REAL &t2)
     }
 }
 
-void Shape::checkBodyBoundary(REAL tmpt, REAL &tmin, vec3<REAL> n, vec3<REAL> &tnormal)
+void Shape::checkBodyBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal)
 {
     if(tmpt >= 0 )
     {

@@ -7,11 +7,6 @@ Cube::Cube(int p1, int p2, double p3)
     generateTriangle();
 }
 
-Cube::Cube(Vector4 pp, Vector4 dd)
-    :Shape(pp, dd)
-{
-}
-
 void Cube::generatePoints()
 {
     float delta_u = 1.0 / (float)m_p1;
@@ -31,8 +26,8 @@ void Cube::generatePoints()
                 u = delta_u * j;
                 z = -0.5 + u;
                 y = flag * 0.5;
-                m_pList.push_back(Vector4(x, y, z, 1.0));
-                m_nList.push_back(Vector4(0, flag, 0, 0));
+                m_pList.push_back(Vector3(x, y, z));
+                m_nList.push_back(Vector3(0, flag, 0));
             }
         }
     }
@@ -49,8 +44,8 @@ void Cube::generatePoints()
                 u = delta_u * j;
                 y = -0.5 + u;
                 z = flag * -0.5;
-                m_pList.push_back(Vector4(x, y, z, 1.0));
-                m_nList.push_back(Vector4(0, 0, -1*flag, 0));
+                m_pList.push_back(Vector3(x, y, z));
+                m_nList.push_back(Vector3(0, 0, -1*flag));
             }
         }
     }
@@ -67,8 +62,8 @@ void Cube::generatePoints()
                 u = delta_u * j;
                 y = -0.5 + u;
                 x = flag * 0.5;
-                m_pList.push_back(Vector4(x, y, z, 1.0));
-                m_nList.push_back(Vector4(flag, 0, 0, 0));
+                m_pList.push_back(Vector3(x, y, z));
+                m_nList.push_back(Vector3(flag, 0, 0));
             }
         }
     }
@@ -114,7 +109,7 @@ void Cube::generateTriangle()
     }
 }
 
-REAL Cube::calculateIntersecP(Vector3 &tnormal, vec2<REAL> &tex)
+REAL Cube::calculateIntersecP(Vector3 &tnormal, Vector2 &tex)
 {
     //cap
     REAL tmpt, tmin = MAX_LIMIT;

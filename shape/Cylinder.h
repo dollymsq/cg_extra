@@ -7,7 +7,6 @@ class Cylinder : public Shape
 {
 public:
     Cylinder(int p1, int p2, double p3);
-    Cylinder(Vector4 pp, Vector4 dd);
 
 protected:
     void generatePoints();

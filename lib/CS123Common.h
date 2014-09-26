@@ -40,6 +40,10 @@ using std::max;
 using std::min;
 
 typedef double REAL;
+typedef glm::vec4 Vector4;
+typedef glm::vec3 Vector3;
+typedef glm::vec2 Vector2;
+
 
 // A structure for a color.  Each channel is 8 bits [0-255].
 struct BGRA
