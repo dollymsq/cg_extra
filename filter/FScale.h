@@ -16,9 +16,12 @@ public:
 protected:
     int bfWidth, bfHeight , aftWidth , aftHeight;
     BGRA *fnlcpy , *midcpy;
-    REAL fxLen, fyLen;
+    REAL fxLen, fyLen; 
+    REAL m_scaleX;            // Horizontal scale factor
+    REAL m_scaleY;
     void getWeightNnormalized(REAL *w, int start, int end, REAL wedge, REAL len);
     void setCanvas(Canvas2D *canvas);
+
 };
 
 #endif // FSCALE_H

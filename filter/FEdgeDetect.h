@@ -13,7 +13,8 @@ public:
 
 protected:
     REAL *Gx, *Gy;
-
+    REAL m_threshold;
+    int m_radius;
 };
 
 #endif // FEDGEDETECT_H

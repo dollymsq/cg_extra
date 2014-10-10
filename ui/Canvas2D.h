@@ -17,7 +17,7 @@
 #include "filter/FEdgeDetect.h"
 #include "filter/FBlur.h"
 #include "filter/FScale.h"
-#include "filter/FSharper.h"
+#include "filter/FRotate.h"
 #include "filter/FAutoLevel.h"
 #include "filter/FMedian.h"
 

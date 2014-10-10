@@ -68,7 +68,8 @@ struct BGRA
     };
 
     // @TODO: [OPTIONAL] You can implement some operators here for color arithmetic.
-
+//    BGRA operator*(const REAL w) const { return BGRA(b*w, g*w, r*w, a);}
+//    BGRA operator+(const BGRA oth) const { return BGRA(b+oth.b, g+oth.g, r+oth.r,a);}
 };
 
 // A structure to store a rectangle on the screen.

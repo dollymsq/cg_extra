@@ -13,10 +13,11 @@ public:
     Filter();
     virtual ~Filter();
     virtual void doFilter(BGRA* cancol) = 0;
-    void setRegionParameter(Canvas2D *canvas);
+    virtual void setRegionParameter(Canvas2D *canvas);
     virtual void setThreshold(REAL thd) {}
     virtual void setBlurRadius(int r) {}
     virtual void setScaleXnY(REAL x, REAL y) {}
+    virtual void setRotateDegree(int d) {}
     virtual void setCanvas(Canvas2D *canvas) {}
 
 
@@ -34,10 +35,6 @@ protected:
 
     int m_minX, m_minY, m_maxX, m_maxY, oriWidth, oriHeight;
 
-    REAL m_threshold;
-    int m_radius;             // Selected blur radius
-    REAL m_scaleX;            // Horizontal scale factor
-    REAL m_scaleY;
 };
 
 inline void handleEdgeIndex(int &p, int max)

@@ -42,7 +42,6 @@ SOURCES += brush/SmudgeBrush.cpp \
     shape/Cube.cpp \
     shape/Cone.cpp \
     filter/Filter.cpp \
-    filter/FSharper.cpp \
     filter/FScale.cpp \
     filter/FMedian.cpp \
     filter/FInvert.cpp \
@@ -51,7 +50,8 @@ SOURCES += brush/SmudgeBrush.cpp \
     filter/FBlur.cpp \
     filter/FAutoLevel.cpp \
     shape/Torus.cpp \
-    shape/Fractal.cpp
+    shape/Fractal.cpp \
+    filter/FRotate.cpp
 
 
 HEADERS += brush/SmudgeBrush.h \
@@ -88,7 +88,6 @@ HEADERS += brush/SmudgeBrush.h \
     shape/Cube.h \
     shape/Cone.h \
     filter/Filter.h \
-    filter/FSharper.h \
     filter/FScale.h \
     filter/FMedian.h \
     filter/FInvert.h \
@@ -97,7 +96,8 @@ HEADERS += brush/SmudgeBrush.h \
     filter/FBlur.h \
     filter/FAutoLevel.h \
     shape/Torus.h \
-    shape/Fractal.h
+    shape/Fractal.h \
+    filter/FRotate.h
 
 
 FORMS += ui/mainwindow.ui

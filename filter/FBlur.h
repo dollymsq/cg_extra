@@ -10,6 +10,8 @@ public:
     void doFilter(BGRA* concol);
     void setBlurRadius(int r);
 
+protected:
+    int m_radius;             // Selected blur radius
 
 };
 
