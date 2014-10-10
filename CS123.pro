@@ -132,8 +132,8 @@ else:unix: LIBS += -L/path/to/your/glew-1.10.0/lib/ -lGLEW
 
 
 #TODO (Windows or Mac): If you are setting up local development on Windows OR Mac, fill in the correct path to your glew and uncomment the following lines:
-#INCLUDEPATH+=/path/to/your/glew/1.10.0/include
-#DEPENDPATH+=/path/to/your/glew/1.10.0/include
+INCLUDEPATH+=/Users/masiqi/glew-1.10.0/include
+DEPENDPATH+=/Users/masiqi/glew-1.10.0/include
 
 RESOURCES += \
     resources.qrc

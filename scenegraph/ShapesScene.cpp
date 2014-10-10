@@ -80,6 +80,7 @@ void ShapesScene::renderGeometry()
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
     instantiateShape();
+
     if(m_shape != NULL)
     {
         m_vsize = m_shape->getVerticesNumber();
