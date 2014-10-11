@@ -74,13 +74,13 @@ void FRotate::interpoloate(glm::vec2 pos, BGRA *cancol, BGRA &dst)
     glm::lowp_ivec2 h, i, e, f;
     h = glm::lowp_ivec2(floor(pos.x), ceil(pos.y));
     i = glm::lowp_ivec2(ceil(pos.x), ceil(pos.y));
-    e = glm::lowp_ivec2(ceil(pos.x), floor(pos.y));
-    f = glm::lowp_ivec2(floor(pos.x), floor(pos.y));
+    e = glm::lowp_ivec2(floor(pos.x), floor(pos.y));
+    f = glm::lowp_ivec2(ceil(pos.x), floor(pos.y));
 
-    REAL wi = (i.x - pos.x) * (i.y - pos.y);
-    REAL wh = (pos.x - h.x) * (h.y - pos.y);
-    REAL we = (e.x - pos.x) * (pos.y - e.y);
-    REAL wf = (pos.x - f.x) * (pos.y - f.y);
+    REAL we = (i.x - pos.x) * (i.y - pos.y);
+    REAL wf = (pos.x - h.x) * (h.y - pos.y);
+    REAL wi = (pos.x - e.x) * (pos.y - e.y);
+    REAL wh = (f.x - pos.x) * (pos.y - f.y);
     REAL sum = wi + wh + we + wf;
     if( sum < 10e-6)
         dst = cancol[h.x*oriWidth + h.y];
