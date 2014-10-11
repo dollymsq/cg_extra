@@ -226,6 +226,9 @@ void Canvas2D::filterImage()
     case FILTER_MEDIAN:
         m_filter = new FMedian();
         break;
+    case FILTER_BILATERAL:
+        m_filter = new FBilateral();
+        break;
     case FILTER_SPECIAL_3:
         m_filter = new FAutoLevel();
         break;

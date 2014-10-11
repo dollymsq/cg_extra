@@ -26,13 +26,13 @@ void FBlur::setBlurRadius(int r)
 {
     m_radius = r;
     REAL sigma = (double)r/3;
-    REAL k = 1/(sqrt(2*M_PI)*sigma*sigma);
+    REAL k = 1/(sqrt(2.0*M_PI)*sigma*sigma);
     REAL sum = 0;//for normalize
 
     m_filter1 = new REAL[2*m_radius +1];
     for(int i = -m_radius; i< m_radius+1; i++)
     {
-        m_filter1[i+m_radius] = k* exp(-i*i/2/sigma/sigma);
+        m_filter1[i+m_radius] = k* exp(-i*i/2.0/sigma/sigma);
         sum += m_filter1[i+m_radius];
     }
     for(int i = -m_radius; i< m_radius+1; i++)

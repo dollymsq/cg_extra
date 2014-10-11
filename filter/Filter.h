@@ -37,12 +37,14 @@ protected:
 
 };
 
-inline void handleEdgeIndex(int &p, int max)
+inline int handleEdgeIndex(int p, int max)
 {
     if(p < 0)
-        p = 0;
+        return 0;
     else if(p > max - 1)
-        p = max - 1;
+        return max - 1;
+    else
+        return p;
 }
 
 #endif // FILTER_H

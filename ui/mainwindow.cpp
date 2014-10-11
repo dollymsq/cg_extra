@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     a += ui->filterTypeInvert;
     a += ui->filterTypeRotate;
     a += ui->filterTypeScale;
-    a += ui->filterTypeSpecial1;
-    a += ui->filterTypeSpecial2;
+    a += ui->filterTypeMedian;
+    a += ui->filterTypeBilateral;
     a += ui->filterTypeSpecial3;
     foreach (QRadioButton *rb, a)
         connect(rb, SIGNAL(clicked()), this, SLOT(activateCanvas2D()));
@@ -162,8 +162,8 @@ void MainWindow::dataBind()
             ui->filterTypeBlur,
             ui->filterTypeScale,
             ui->filterTypeRotate,
-            ui->filterTypeSpecial1,
-            ui->filterTypeSpecial2,
+            ui->filterTypeMedian,
+            ui->filterTypeBilateral,
             ui->filterTypeSpecial3) )
     BIND(FloatBinding::bindSliderAndTextbox(
         ui->edgeDetectThresholdSlider, ui->edgeDetectThresholdTextbox, settings.edgeDetectThreshold,

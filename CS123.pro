@@ -51,7 +51,8 @@ SOURCES += brush/SmudgeBrush.cpp \
     filter/FAutoLevel.cpp \
     shape/Torus.cpp \
     shape/Fractal.cpp \
-    filter/FRotate.cpp
+    filter/FRotate.cpp \
+    filter/FBilateral.cpp
 
 
 HEADERS += brush/SmudgeBrush.h \
@@ -97,7 +98,8 @@ HEADERS += brush/SmudgeBrush.h \
     filter/FAutoLevel.h \
     shape/Torus.h \
     shape/Fractal.h \
-    filter/FRotate.h
+    filter/FRotate.h \
+    filter/FBilateral.h
 
 
 FORMS += ui/mainwindow.ui
