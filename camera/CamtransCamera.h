@@ -70,6 +70,15 @@ public:
     // Sets the near and far clip planes for this camera.
     void setClip(float nearPlane, float farPlane);
 
+    void updateProjectionMatrix();
+    void updateModelviewMatrix();
+    glm::mat4x4 getRotMat  (const Vector4 &p, const Vector4 &v, const REAL a) ;
+
+private:
+    REAL m_aspectRatio, m_heightAngle, m_near, m_far;
+    Vector4 m_eyePoint, /*m_lookVec, m_upVec,*/ u, v, w;
+    glm::mat4x4 m_modelviewMatrix, m_projectionMatrix, m_scale, m_perUnhinge;
+
 };
 
 #endif // CAMTRANSCAMERA_H
