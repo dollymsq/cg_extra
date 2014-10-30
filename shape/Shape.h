@@ -7,7 +7,6 @@
 #include "Settings.h"
 #include <qgl.h>
 #include <SupportCanvas3D.h>
-#include "scenegraph/OpenGLScene.h"
 
 #define MAX_LIMIT 1E+37
 
@@ -25,17 +24,27 @@ public:
 
     int virtual getVerticesNumber();
 
-    void virtual packVerticesintoBuffer(GLuint &m_shader, NormalRenderer *m_normalRenderer);
+    GLfloat* getVertexDataPtr() { return vertexData; }
+    void clearVertexData() { delete[] vertexData;}
+    void virtual packVerticesintoBuffer(GLuint &m_shader);
 
     std::deque<Vector3> m_pList; //store points
     std::deque<Vector3> m_nList; //store normals
     std::deque<int> m_tList;//store triangles(index of points)
+
+    GLuint vertexBuffer;
+    GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
+
+    void vaoDraw();
+
+
 
 protected:
     int m_p1, m_p2, m_vsize;
     double m_p3;
     Vector4 p, d;
     GLfloat* vertexData;
+
 
     std::deque<Vector3>::iterator it;
     std::deque<int>::iterator iit;
@@ -51,4 +60,3 @@ protected:
 };
 
 #endif // SHAPE_H
-

@@ -38,7 +38,7 @@ glm::mat4x4 CamtransCamera::getProjectionMatrix() const
 glm::mat4x4 CamtransCamera::getViewMatrix() const
 {
     // @TODO: [CAMTRANS] Fill this in...
-    return m_modelviewMatrix;
+    return m_viewMatrix;
 }
 
 glm::mat4x4 CamtransCamera::getScaleMatrix() const
@@ -93,7 +93,7 @@ void CamtransCamera::orientLook(const glm::vec4 &eye, const glm::vec4 &look, con
     u = glm::normalize(Vector4(tp, 0));
     v = Vector4(glm::cross(Vector3(w), Vector3(u)), 0);
 
-    updateModelviewMatrix();
+    updateViewMatrix();
 }
 
 void CamtransCamera::setHeightAngle(float h)
@@ -109,37 +109,44 @@ void CamtransCamera::translate(const glm::vec4 &v)
     // @TODO: [CAMTRANS] Fill this in...
     m_eyePoint += v;
 
-    updateModelviewMatrix();
+    updateViewMatrix();
 }
 
 void CamtransCamera::rotateU(float degrees)
 {
     // @TODO: [CAMTRANS] Fill this in...
-    glm::mat4x4 M = getRotMat(m_eyePoint, u, degrees/180*M_PI);
-    v = M * v;
-    w = M * w;
 
-    updateModelviewMatrix();
+    Vector4 v0 = Vector4(v);
+    Vector4 w0 = Vector4(w);
+    v = v0 * float(cos(degrees/180.0*M_PI)) + w0 * float(sin(degrees/180.0*M_PI));
+    w = -v0 * float(sin(degrees/180.0*M_PI)) + w0 * float(cos(degrees/180.0*M_PI));
+    updateViewMatrix();
 }
 
 void CamtransCamera::rotateV(float degrees)
 {
     // @TODO: [CAMTRANS] Fill this in...
-    glm::mat4x4 M = getRotMat(m_eyePoint, v, degrees/180*M_PI);
-    u = M * u;
-    w = M * w;
 
-    updateModelviewMatrix();
+    Vector4 u0 = Vector4(u);
+    Vector4 w0 = Vector4(w);
+    u = u0 *float(cos(degrees/180*M_PI)) - w0* float(sin(degrees/180*M_PI));
+    w = u0 * float(sin(degrees/180*M_PI)) + w0 * float(cos(degrees/180*M_PI));
+
+    updateViewMatrix();
 }
 
 void CamtransCamera::rotateW(float degrees)
 {
     // @TODO: [CAMTRANS] Fill this in...
-    glm::mat4x4 M = getRotMat(m_eyePoint, w, degrees/180*M_PI);
-    v = M * v;
-    u = M * u;
+//    glm::mat4x4 M = getRotMat(m_eyePoint, w, degrees/180*M_PI);
+//    v = M * v;
+//    u = M * u;
+    Vector4 u0 = Vector4(u);
+    Vector4 v0 = Vector4(v);
+    u = v0 * float(sin(degrees/180*M_PI)) + u0 * float(cos(degrees/180*M_PI));
+    v = v0 * float(cos(degrees/180.0*M_PI)) - u0 * float(sin(degrees/180.0*M_PI));
 
-    updateModelviewMatrix();
+    updateViewMatrix();
 }
 
 void CamtransCamera::setClip(float nearPlane, float farPlane)
@@ -172,7 +179,7 @@ void CamtransCamera::updateProjectionMatrix()
     m_projectionMatrix =  m_perUnhinge * m_scale;
 }
 
-void CamtransCamera::updateModelviewMatrix()
+void CamtransCamera::updateViewMatrix()
 {
     glm::mat4x4 MRot(u.x, u.y, u.z, 0,
                    v.x, v.y, v.z, 0,
@@ -184,49 +191,5 @@ void CamtransCamera::updateModelviewMatrix()
                      0, 0, 1, -m_eyePoint.z,
                      0, 0, 0, 1);
     MTrans = glm::transpose(MTrans);
-    m_modelviewMatrix = MRot * MTrans;
-}
-
-glm::mat4x4 CamtransCamera::getRotMat  (const Vector4 &p, const Vector4 &v, const REAL a) {
-
-    // @TODO: [CAMTRANS] Fill this in...
-    REAL theta, phi;
-    theta = atan2(v.z, v.x);
-    phi = -atan2(v.y, sqrt(v.x*v.x + v.z*v.z));
-
-    glm::mat4x4 M1 = glm::transpose(glm::mat4x4(cos(theta), 0, sin(theta), 0,
-                                                0, 1, 0, 0,
-                                                -sin(theta), 0, cos(theta), 0,
-                                                0, 0, 0, 1));
-    glm::mat4x4 M2 = glm::transpose(glm::mat4x4(cos(phi), -sin(phi), 0, 0,
-                                                sin(phi), cos(phi), 0, 0,
-                                                0, 0, 1, 0,
-                                                0, 0, 0, 1));
-    glm::mat4x4 M3 = glm::transpose(glm::mat4x4(1, 0, 0, 0,
-                                                0, cos(a), -sin(a), 0,
-                                                0, sin(a), cos(a), 0,
-                                                0, 0, 0, 1));
-
-    glm::mat4x4 invM1 = glm::transpose(glm::mat4x4(cos(theta), 0, -sin(theta), 0,
-                                                   0, 1, 0, 0,
-                                                   sin(theta), 0, cos(theta), 0,
-                                                   0, 0, 0, 1));
-    glm::mat4x4 invM2 = glm::transpose(glm::mat4x4(cos(phi), sin(phi), 0, 0,
-                                                   -sin(phi), cos(phi), 0, 0,
-                                                   0, 0, 1, 0,
-                                                   0, 0, 0, 1));
-
-    glm::mat4x4 Tran = glm::transpose(glm::mat4x4(1, 0, 0, p.x,
-                                                  0, 1, 0, p.y,
-                                                  0, 0, 1, p.z,
-                                                  0, 0, 0, 1));
-    glm::mat4x4 invTran = glm::transpose(glm::mat4x4(1, 0, 0, -p.x,
-                                                     0, 1, 0, -p.y,
-                                                     0, 0, 1, -p.z,
-                                                     0, 0, 0, 1));
-
-    glm::mat4x4 M = Tran * invM1 * invM2 * M3 * M2* M1 * invTran;
-
-    return M;
-
+    m_viewMatrix = MRot * MTrans;
 }

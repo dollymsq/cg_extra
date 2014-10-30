@@ -3,13 +3,7 @@
 
 #include "OpenGLScene.h"
 #include "Settings.h"
-#include "shape/Shape.h"
-#include "shape/Cube.h"
-#include "shape/Cone.h"
-#include "shape/Sphere.h"
-#include "shape/Cylinder.h"
-#include "shape/Torus.h"
-#include "shape/Fractal.h"
+
 
 
 /**
@@ -46,23 +40,14 @@ protected:
     // Render geometry for Shapes and Sceneview.
     virtual void renderGeometry();
 
+    void setShapeBufferData();
+
 private:
     // Storage for private copies of the scene's light and material data. Note that these don't
     // need to be freed because they are VALUE types (not pointers) and the memory for them is
     // freed when the class itself is freed.
     CS123SceneLightData  m_light;
     CS123SceneMaterial   m_material;
-
-    GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
-    GLuint vertexBuffer;
-    void instantiateShape();
-
-protected:
-    //for shapes
-    Shape *m_shape;
-    int m_sp1, m_sp2, m_styp;
-    double m_sp3;
-    int m_vsize;
 
 };
 

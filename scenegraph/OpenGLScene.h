@@ -9,6 +9,14 @@
 
 class SupportCanvas3D;
 
+#include "shape/Shape.h"
+#include "shape/Cube.h"
+#include "shape/Cone.h"
+#include "shape/Sphere.h"
+#include "shape/Cylinder.h"
+#include "shape/Torus.h"
+#include "shape/Fractal.h"
+
 using std::string;
 
 /** Holds onto the data necessary to render the normals of a mesh
@@ -184,6 +192,7 @@ public:
     // Renders arrows for the normals that were initialized using initNormals(...).
     void renderNormals();
 
+    // The normal renderer, which can be used to render arrows for each normal in Shapes.
     NormalRenderer *m_normalRenderer;
 
 
@@ -207,7 +216,13 @@ protected:
     // The program ID for OpenGL.
     GLuint m_shader;
 
-    // The normal renderer, which can be used to render arrows for each normal in Shapes.
+    //for shapescene and sceneviewscene
+    Shape *m_shape;
+    int m_sp1, m_sp2, m_styp;
+    double m_sp3;
+    int m_vsize;
+
+    virtual void instantiateShape();
 
 private:
 

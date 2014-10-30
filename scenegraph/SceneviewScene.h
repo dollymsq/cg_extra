@@ -4,7 +4,6 @@
 #include "OpenGLScene.h"
 #include "SelectionRecorder.h"
 
-
 /**
  *
  * @class SceneviewScene
@@ -37,6 +36,8 @@ protected:
     // Render geometry for Shapes and Sceneview.
     virtual void renderGeometry();
 
+    void decideParameter();
+
 public:
     // Use this method to set an internal selection, based on the (x, y) position of the mouse
     // pointer.  This will be used during the "modeler" lab, so don't worry about it for now.
@@ -46,7 +47,6 @@ private:
     // This will help you during the "modeler" lab, so don't worry about it for now.
     SelectionRecorder m_selectionRecorder;
     int m_selectionIndex;
-
 };
 
 #endif // SCENEVIEWSCENE_H

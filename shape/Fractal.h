@@ -11,9 +11,8 @@ protected:
     void generatePoints();
     void generatePoints_helper(Vector3 up, Vector3 down, Vector3 left, Vector3 right, int level);
 
-    void drawShape();
     int getVerticesNumber();
-
+    virtual void drawShape();
     Vector3 normal1, normal2, normal3, normal4;
 };
 

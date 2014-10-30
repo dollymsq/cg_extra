@@ -9,11 +9,20 @@
 OpenGLScene::OpenGLScene()
 {
     m_normalRenderer = NULL;
+
+    m_shape = NULL;
+    m_sp1 = 0;
+    m_sp2 = 0;
+    m_sp3 = 0;
+    m_styp = -1;
 }
 
 OpenGLScene::~OpenGLScene()
 {
     delete m_normalRenderer;
+
+    if(m_shape!=NULL)
+        delete m_shape;
 }
 
 void OpenGLScene::init()
@@ -162,4 +171,56 @@ void OpenGLScene::setLight(const CS123SceneLightData &light)
                 color.r, color.g, color.b);
     glUniform3f(glGetUniformLocation(m_shader, ("lightAttenuations" + indexString).c_str()),
             light.function.x, light.function.y, light.function.z);
+}
+
+void OpenGLScene::instantiateShape()
+{
+    if(m_shape!= NULL)
+    {
+        delete m_shape;
+        m_shape = NULL;
+    }
+    switch(m_styp)
+    {
+    case SHAPE_CUBE:
+        m_shape = new Cube(m_sp1, m_sp2, m_sp3);
+        break;
+    case SHAPE_CONE:
+        m_shape = new Cone(m_sp1, m_sp2, m_sp3);
+        break;
+    case SHAPE_CYLINDER:
+        m_shape = new Cylinder(m_sp1, m_sp2, m_sp3);
+        break;
+    case SHAPE_SPHERE:
+        m_shape = new Sphere(m_sp1, m_sp2, m_sp3);
+        break;
+    case SHAPE_TORUS:
+        m_shape = new Torus(m_sp1, m_sp2, m_sp3);
+        break;
+    case SHAPE_FRACTAL:
+        m_shape = new Fractal(m_sp1, m_sp2, m_sp3);
+        break;
+    default:
+        m_normalRenderer->clearArrays();
+        break;
+    }
+
+    if(m_shape != NULL)
+    {
+//        m_vsize = m_shape->getVerticesNumber();
+        m_shape->packVerticesintoBuffer(m_shader);
+        // Initialize normals so they can be displayed with arrows. (This can be very helpful
+        // for debugging!)
+        // This object (m_normalRenderer) can be passed around to other classes,
+        // make sure to include "OpenGLScene.h" in any class you want to use the NormalRenderer!
+        // generateArrays will take care of any cleanup from the previous object state.
+        m_normalRenderer->generateArrays(
+                    m_shape->getVertexDataPtr(),             // Pointer to vertex data
+                    6 * sizeof(GLfloat),    // Stride (distance between consecutive vertices/normals in BYTES
+                    0,                      // Offset of first position in BYTES
+                    3 * sizeof(GLfloat),    // Offset of first normal in BYTES
+                    m_shape->getVerticesNumber());                     // Number of vertices
+        m_shape->clearVertexData();
+    }
+
 }

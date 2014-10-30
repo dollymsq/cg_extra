@@ -6,6 +6,12 @@ Shape::Shape(int p1, int p2, double p3)
     m_p2 = p2;
     m_p3 = p3;
     vertexData = NULL;
+
+    // Initialize the vertex array object.
+    glGenVertexArrays(1, &m_vaoID);
+    glBindVertexArray(m_vaoID);
+    glGenBuffers(1, &vertexBuffer);
+
 }
 
 Shape::Shape(Vector4 pp, Vector4 dd)
@@ -20,8 +26,8 @@ Shape::~Shape()
     m_nList.clear();
     m_tList.clear();
 
-    if(vertexData!=NULL)
-        delete[] vertexData;
+//    glDeleteBuffers(m_vsize, &vertexBuffer);
+
 }
 
 void Shape::drawTriangle(int offset1, int offset2, int offset3, int j)
@@ -116,8 +122,10 @@ int Shape::getVerticesNumber()
     return m_tList.size();
 }
 
-void Shape::packVerticesintoBuffer(GLuint &m_shader, NormalRenderer *m_normalRenderer)
+void Shape::packVerticesintoBuffer(GLuint &m_shader)
 {
+        glBindVertexArray(m_vaoID);
+
         m_vsize = getVerticesNumber();
 
         vertexData = new GLfloat[m_vsize*6];
@@ -125,6 +133,8 @@ void Shape::packVerticesintoBuffer(GLuint &m_shader, NormalRenderer *m_normalRen
         drawShape();
 
         // Pass vertex data to OpenGL.
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
         glBufferData(GL_ARRAY_BUFFER, m_vsize * 6 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
         glEnableVertexAttribArray(glGetAttribLocation(m_shader, "position"));
         glEnableVertexAttribArray(glGetAttribLocation(m_shader, "normal"));
@@ -148,16 +158,12 @@ void Shape::packVerticesintoBuffer(GLuint &m_shader, NormalRenderer *m_normalRen
         // Unbind buffers.
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+}
 
-        // Initialize normals so they can be displayed with arrows. (This can be very helpful
-        // for debugging!)
-        // This object (m_normalRenderer) can be passed around to other classes,
-        // make sure to include "OpenGLScene.h" in any class you want to use the NormalRenderer!
-        // generateArrays will take care of any cleanup from the previous object state.
-        m_normalRenderer->generateArrays(
-                    vertexData,             // Pointer to vertex data
-                    6 * sizeof(GLfloat),    // Stride (distance between consecutive vertices/normals in BYTES
-                    0,                      // Offset of first position in BYTES
-                    3 * sizeof(GLfloat),    // Offset of first normal in BYTES
-                    m_vsize);                     // Number of vertices
+void Shape::vaoDraw()
+{
+    glBindVertexArray(m_vaoID);
+    m_vsize = getVerticesNumber();
+    glDrawArrays(GL_TRIANGLES, 0, m_vsize/* Number of vertices to draw */);
+    glBindVertexArray(0);
 }
