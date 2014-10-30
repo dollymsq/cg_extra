@@ -124,7 +124,7 @@ macx {
 #TODO (Windows): If you are setting up local development on Windows (NOT Mac), comment out the following lines
 win32:CONFIG(release, debug|release): LIBS += -L/course/cs123/lib/glew/glew-1.10.0/lib/release/ -lGLEW
 else:win32:CONFIG(debug, debug|release): LIBS += -L/course/cs123/lib/glew/glew-1.10.0/lib/debug/ -lGLEW
-else:unix: LIBS += -L/path/to/your/glew-1.10.0/lib/ -lGLEW
+else:unix: LIBS += -L/Users/masiqi/glew-1.10.0/lib/ -lGLEW
 
 #TODO (Windows): If you are setting up local development on Windows (NOT Mac), fill in the correct name of your glew library (the .a file) and uncomment the following lines:
 #DEFINES += GLEW_STATIC
