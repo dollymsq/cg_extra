@@ -24,11 +24,11 @@ void FMedian::doFilter(BGRA* cancol)
             for(int i = -heightR; i < heightR+1; i ++)
             {
                 srowIdx = row + i;
-                handleEdgeIndex(srowIdx, oriHeight);
+                srowIdx = handleEdgeIndex(srowIdx, oriHeight);
                 for(int j = -widthR; j < widthR+1; j ++)
                 {
                     scolIdx = col+j;
-                    handleEdgeIndex(scolIdx, oriWidth);
+                    scolIdx = handleEdgeIndex(scolIdx, oriWidth);
                     tpb.push_back(cancol[srowIdx*oriWidth+scolIdx].b);
                     tpg.push_back(cancol[srowIdx*oriWidth+scolIdx].g);
                     tpr.push_back(cancol[srowIdx*oriWidth+scolIdx].r);

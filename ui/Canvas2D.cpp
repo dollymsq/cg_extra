@@ -219,11 +219,15 @@ void Canvas2D::filterImage()
         m_filter = new FScale();
         m_filter->setScaleXnY(settings.scaleX, settings.scaleY);
         break;
+    case FILTER_ROTATE:
+        m_filter = new FRotate();
+        m_filter->setRotateDegree(settings.rotateAngle);
+        break;
     case FILTER_MEDIAN:
         m_filter = new FMedian();
         break;
-    case FILTER_SPECIAL_2:
-        m_filter = new FSharper();
+    case FILTER_BILATERAL:
+        m_filter = new FBilateral();
         break;
     case FILTER_SPECIAL_3:
         m_filter = new FAutoLevel();
@@ -232,7 +236,6 @@ void Canvas2D::filterImage()
         //to be continued;
         m_filter = NULL;
         break;
-        // fill in the rest
     }
     if(m_filter!= NULL)
     {
@@ -240,7 +243,7 @@ void Canvas2D::filterImage()
         m_filter->doFilter(this->data());
     }
     //external handling of special filter
-    if(settings.filterType == FILTER_SCALE)
+    if(settings.filterType == FILTER_SCALE || settings.filterType == FILTER_ROTATE)
         m_filter->setCanvas(this);
     update();
 }

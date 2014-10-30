@@ -67,11 +67,11 @@ void Filter::convolution(BGRA *dst, BGRA *src, REAL* filter, int f_width, int f_
             for(int i = -heightR; i < heightR+1; i ++)
             {
                 srowIdx = row + i;
-                handleEdgeIndex(srowIdx, oriHeight);
+                srowIdx = handleEdgeIndex(srowIdx, oriHeight);
                 for(int j = -widthR; j < widthR+1; j ++)
                 {
                     scolIdx = col + j;
-                    handleEdgeIndex(scolIdx, oriWidth);
+                    scolIdx = handleEdgeIndex(scolIdx, oriWidth);
                     fIdx = (i + heightR)* f_width + j + widthR;
                     realb += (double)src[srowIdx*oriWidth + scolIdx].b*filter[fIdx];
                     realg += (double)src[srowIdx*oriWidth + scolIdx].g*filter[fIdx];
@@ -100,11 +100,11 @@ void Filter::convolution(REAL *dst, REAL *src, REAL* filter, int f_width, int f_
             for(int i = -heightR; i < heightR+1; i ++)
             {
                 srowIdx = row + i;
-                handleEdgeIndex(srowIdx, oriHeight);
+                srowIdx = handleEdgeIndex(srowIdx, oriHeight);
                 for(int j = -widthR; j < widthR+1; j ++)
                 {
                     scolIdx = col + j;
-                    handleEdgeIndex(scolIdx, oriWidth);
+                    scolIdx = handleEdgeIndex(scolIdx, oriWidth);
                     fIdx = (i + heightR)* f_width + j + widthR;
                     dst[row*oriWidth + col] += src[srowIdx*oriWidth + scolIdx]*filter[fIdx];
                 }

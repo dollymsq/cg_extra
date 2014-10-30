@@ -74,7 +74,7 @@ void FScale::scaleImageX(BGRA *dst, BGRA* src, int curWidth, int curHeight)
             for(int i = start; i< end+1; i ++)
             {
                 t = i+m_minX;
-                handleEdgeIndex(t, oriWidth);
+                t = handleEdgeIndex(t, oriWidth);
                 sIdx = (row+m_minY)*oriWidth + t ;
 
                 tmpb += src[sIdx].b* w[i-start];
@@ -116,7 +116,7 @@ void FScale::scaleImageY(BGRA *dst, BGRA* src, int curWidth, int curHeight)
             for(int i = start; i< end+1; i ++)
             {
                 t = i;
-                handleEdgeIndex(t, bfHeight);
+                t = handleEdgeIndex(t, bfHeight);
                 sIdx = t*curWidth + col ;
 
                 tmpb += src[sIdx].b* w[i-start];

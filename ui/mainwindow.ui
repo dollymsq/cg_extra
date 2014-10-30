@@ -65,8 +65,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>344</width>
+             <height>3046</height>
             </rect>
            </property>
           </widget>
@@ -986,16 +986,16 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="filterTypeSpecial1">
+         <widget class="QRadioButton" name="filterTypeMedian">
           <property name="text">
            <string>Median</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="filterTypeSpecial2">
+         <widget class="QRadioButton" name="filterTypeBilateral">
           <property name="text">
-           <string>Special 2</string>
+           <string>Bilateral Smoothing</string>
           </property>
          </widget>
         </item>
@@ -1805,7 +1805,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
