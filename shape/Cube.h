@@ -6,7 +6,7 @@
 class Cube : public Shape
 {
 public:
-    Cube(int p1, int p2, double p3);
+    Cube(int p1, int p2, double p3, CS123SceneMaterial m);
 
 protected:
     void generatePoints();

@@ -35,6 +35,7 @@ enum TransformationType {
 // Struct to store a RGBA color in floats [0,1]
 struct CS123SceneColor 
 {
+
     union {
         struct {
            float r;
@@ -44,8 +45,13 @@ struct CS123SceneColor
         };
         float channels[4]; // points to the same four floats above...
     };
+    CS123SceneColor() : r(0), g(0), b(0), a(0) {}
+    CS123SceneColor(float red, float green, float blue, float alpha = 255)
+        : r(red), g(green), b(blue), a(alpha) {}
 
    // @TODO: [OPTIONAL] You can implement some operators here for color arithmetic.
+        CS123SceneColor operator* (const float w) const { return CS123SceneColor(r*w, g*w, b*w, a);}
+        CS123SceneColor operator+ (const CS123SceneColor oth) const { return CS123SceneColor(r+oth.r, g+oth.g, b+oth.b, a);}
 
 };
 

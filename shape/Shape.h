@@ -7,13 +7,14 @@
 #include "Settings.h"
 #include <qgl.h>
 #include <SupportCanvas3D.h>
+#include <CS123SceneData.h>
 
 #define MAX_LIMIT 1E+37
 
 class Shape
 {
 public:
-    Shape(int p1, int p2, double p3);
+    Shape(int p1, int p2, double p3, CS123SceneMaterial m);
     Shape(Vector4 pp, Vector4 dd);
 
     virtual ~ Shape();
@@ -38,12 +39,12 @@ public:
     void vaoDraw();
 
 
-
 protected:
     int m_p1, m_p2, m_vsize;
     double m_p3;
     Vector4 p, d;
     GLfloat* vertexData;
+    CS123SceneMaterial   m_material;
 
 
     std::deque<Vector3>::iterator it;

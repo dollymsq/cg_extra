@@ -53,7 +53,6 @@ void ShapesScene::renderGeometry()
     // TODO: [SHAPES] Render the shape. The sample code provided draws the 3 vertices defined in
     //       init() above.
 
-    applyMaterial(m_material);
 
     // Draw the shape.
 
@@ -63,11 +62,16 @@ void ShapesScene::renderGeometry()
         m_sp2 = settings.shapeParameter2;
         m_sp3 = settings.shapeParameter3;
         m_styp = settings.shapeType;
-        instantiateShape();
+        instantiateShape(m_material);
     }
+    applyMaterial(m_material);
 
-    if(m_shape != NULL)
-        m_shape->vaoDraw();
+//    if(m_shape != NULL)
+//        m_shapevaoDraw();
+    glBindVertexArray(m_shape->m_vaoID);
+    m_vsize = m_shape->getVerticesNumber();
+    glDrawArrays(GL_TRIANGLES, 0, m_vsize/* Number of vertices to draw */);
+    glBindVertexArray(0);
 
 }
 

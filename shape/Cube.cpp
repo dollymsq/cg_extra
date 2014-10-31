@@ -1,7 +1,7 @@
 #include "Cube.h"
 
-Cube::Cube(int p1, int p2, double p3)
-    :Shape(p1, p2, p3)
+Cube::Cube(int p1, int p2, double p3, CS123SceneMaterial m)
+    :Shape(p1, p2, p3, m)
 {
     generatePoints();
     generateTriangle();

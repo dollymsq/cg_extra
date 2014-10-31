@@ -1,7 +1,7 @@
 #include "Fractal.h"
 
-Fractal::Fractal(int p1, int p2, double p3)
-    :Shape(p1, p2, p3)
+Fractal::Fractal(int p1, int p2, double p3, CS123SceneMaterial m)
+    :Shape(p1, p2, p3, m)
 {
     m_p1 = min(7, m_p1/10);
     generatePoints();

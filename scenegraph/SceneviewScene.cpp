@@ -22,6 +22,17 @@ void SceneviewScene::init()
     OpenGLScene::init();
 
     // Initialize the vertex array object.
+    decideParameter();
+
+    std::vector<primitiveNmatrix>::iterator it;
+    for(it = m_tbd.begin(); it != m_tbd.end(); it++)
+    {
+        m_styp = (*it).shapetype;
+
+        instantiateShape((*it).material);
+        (*it).m_vaoID = m_shape->m_vaoID;
+        (*it).verticesNumber = m_shape->getVerticesNumber();
+    }
 }
 
 void SceneviewScene::setLights(const glm::mat4 viewMatrix)
@@ -45,30 +56,24 @@ void SceneviewScene::renderGeometry()
     //
     // This is where you should render the geometry of the scene. Use what you
     // know about OpenGL and leverage your Shapes classes to get the job done.
-    decideParameter();
 
-    m_vsize = 0;
     std::vector<primitiveNmatrix>::iterator it;
     for(it = m_tbd.begin(); it != m_tbd.end(); it++)
     {
         glUniformMatrix4fv(glGetUniformLocation(m_shader, "m"), 1, GL_FALSE, &(((*it).comMatrix)[0][0]));
 
         CS123SceneMaterial material = (*it).material;
-        material.cAmbient.b = material.cAmbient.b * m_sceneglobalData.ka;
-        material.cAmbient.g = material.cAmbient.g * m_sceneglobalData.ka;
-        material.cAmbient.r = material.cAmbient.r * m_sceneglobalData.ka;
 
-        material.cDiffuse.b = material.cDiffuse.b * m_sceneglobalData.kd;
-        material.cDiffuse.g = material.cDiffuse.g * m_sceneglobalData.kd;
-        material.cDiffuse.r = material.cDiffuse.r * m_sceneglobalData.kd;
+        material.cAmbient = (*it).material.cAmbient * m_sceneglobalData.ka;
+        material.cDiffuse = (*it).material.cDiffuse * m_sceneglobalData.kd;
+        material.cSpecular = (*it).material.cSpecular * m_sceneglobalData.ks;
+        material.cTransparent = (*it).material.cTransparent * m_sceneglobalData.kt;
 
         applyMaterial(material);
 
-        m_styp = (*it).shapetype;
-        instantiateShape();
-
-        if(m_shape != NULL)
-            m_shape->vaoDraw();
+        glBindVertexArray((*it).m_vaoID);
+        glDrawArrays(GL_TRIANGLES, 0, (*it).verticesNumber/* Number of vertices to draw */);
+        glBindVertexArray(0);
     }
 
 }

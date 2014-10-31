@@ -175,7 +175,7 @@ void OpenGLScene::setLight(const CS123SceneLightData &light)
             light.function.x, light.function.y, light.function.z);
 }
 
-void OpenGLScene::instantiateShape()
+void OpenGLScene::instantiateShape(CS123SceneMaterial material)
 {
     if(m_shape!= NULL)
     {
@@ -185,22 +185,22 @@ void OpenGLScene::instantiateShape()
     switch(m_styp)
     {
     case SHAPE_CUBE:
-        m_shape = new Cube(m_sp1, m_sp2, m_sp3);
+        m_shape = new Cube(m_sp1, m_sp2, m_sp3, material);
         break;
     case SHAPE_CONE:
-        m_shape = new Cone(m_sp1, m_sp2, m_sp3);
+        m_shape = new Cone(m_sp1, m_sp2, m_sp3, material);
         break;
     case SHAPE_CYLINDER:
-        m_shape = new Cylinder(m_sp1, m_sp2, m_sp3);
+        m_shape = new Cylinder(m_sp1, m_sp2, m_sp3, material);
         break;
     case SHAPE_SPHERE:
-        m_shape = new Sphere(m_sp1, m_sp2, m_sp3);
+        m_shape = new Sphere(m_sp1, m_sp2, m_sp3, material);
         break;
     case SHAPE_TORUS:
-        m_shape = new Torus(m_sp1, m_sp2, m_sp3);
+        m_shape = new Torus(m_sp1, m_sp2, m_sp3, material);
         break;
     case SHAPE_FRACTAL:
-        m_shape = new Fractal(m_sp1, m_sp2, m_sp3);
+        m_shape = new Fractal(m_sp1, m_sp2, m_sp3, material);
         break;
     default:
         m_normalRenderer->clearArrays();
@@ -209,7 +209,6 @@ void OpenGLScene::instantiateShape()
 
     if(m_shape != NULL)
     {
-//        m_vsize = m_shape->getVerticesNumber();
         m_shape->packVerticesintoBuffer(m_shader);
         // Initialize normals so they can be displayed with arrows. (This can be very helpful
         // for debugging!)

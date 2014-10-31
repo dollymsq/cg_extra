@@ -4,7 +4,7 @@
 class Torus : public Shape
 {
 public:
-    Torus(int p1, int p2, double p3);
+    Torus(int p1, int p2, double p3, CS123SceneMaterial m);
 
 protected:
     void generatePoints();

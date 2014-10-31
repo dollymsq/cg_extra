@@ -1,11 +1,12 @@
 #include "Shape.h"
 
-Shape::Shape(int p1, int p2, double p3)
+Shape::Shape(int p1, int p2, double p3, CS123SceneMaterial m)
 {
     m_p1 = p1;
     m_p2 = p2;
     m_p3 = p3;
     vertexData = NULL;
+    m_material = m;
 
     // Initialize the vertex array object.
     glGenVertexArrays(1, &m_vaoID);
@@ -127,33 +128,43 @@ void Shape::packVerticesintoBuffer(GLuint &m_shader)
         glBindVertexArray(m_vaoID);
 
         m_vsize = getVerticesNumber();
+        std::cout<<"haaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-        vertexData = new GLfloat[m_vsize*6];
-        //fill in the vertexData
-        drawShape();
+        if(m_material.textureMap && m_material.textureMap->isUsed)
+            std::cout<<"happpppppppppppppppp";
 
-        // Pass vertex data to OpenGL.
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+//        if(!m_material.textureMap || !m_material.textureMap->isUsed)
+        {
+            vertexData = new GLfloat[m_vsize*6];
+            //fill in the vertexData
+            drawShape();
 
-        glBufferData(GL_ARRAY_BUFFER, m_vsize * 6 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(glGetAttribLocation(m_shader, "position"));
-        glEnableVertexAttribArray(glGetAttribLocation(m_shader, "normal"));
-        glVertexAttribPointer(
-                    glGetAttribLocation(m_shader, "position"),
-                    3,                   // Num coordinates per position
-                    GL_FLOAT,            // Type
-                    GL_FALSE,            // Normalized
-                    sizeof(GLfloat) * 6, // Stride
-                    (void*) 0            // Array buffer offset
-                    );
-        glVertexAttribPointer(
-                    glGetAttribLocation(m_shader, "normal"),
-                    3,           // Num coordinates per normal
-                    GL_FLOAT,    // Type
-                    GL_TRUE,     // Normalized
-                    sizeof(GLfloat) * 6,           // Stride
-                    (void*) (sizeof(GLfloat) * 3)    // Array buffer offset
-                    );
+            // Pass vertex data to OpenGL.
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+            glBufferData(GL_ARRAY_BUFFER, m_vsize * 6 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+
+            glEnableVertexAttribArray(glGetAttribLocation(m_shader, "position"));
+            glEnableVertexAttribArray(glGetAttribLocation(m_shader, "normal"));
+            glVertexAttribPointer(
+                        glGetAttribLocation(m_shader, "position"),
+                        3,                   // Num coordinates per position
+                        GL_FLOAT,            // Type
+                        GL_FALSE,            // Normalized
+                        sizeof(GLfloat) * 6, // Stride
+                        (void*) 0            // Array buffer offset
+                        );
+            glVertexAttribPointer(
+                        glGetAttribLocation(m_shader, "normal"),
+                        3,           // Num coordinates per normal
+                        GL_FLOAT,    // Type
+                        GL_TRUE,     // Normalized
+                        sizeof(GLfloat) * 6,           // Stride
+                        (void*) (sizeof(GLfloat) * 3)    // Array buffer offset
+                        );
+        }
+//        else
+        {}
 
         // Unbind buffers.
         glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -1,7 +1,7 @@
 #include "Sphere.h"
 
-Sphere::Sphere(int p1, int p2, double p3)
-    :Shape(p1, p2, p3)
+Sphere::Sphere(int p1, int p2, double p3, CS123SceneMaterial m)
+    :Shape(p1, p2, p3, m)
 {
     m_p1 = max(2, m_p1);
     m_p2 = max(3, m_p2);
