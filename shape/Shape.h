@@ -39,6 +39,8 @@ public:
     GLuint vertexBuffer;
     GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
 
+    GLuint loadTexture(const std::string &filename);
+
 
 protected:
     int m_p1, m_p2, m_vsize;
@@ -63,8 +65,6 @@ protected:
     int texImgWidth, texImgHeight;
 
 
-private:
-    GLuint loadTexture(const std::string &filename);
 
 
 

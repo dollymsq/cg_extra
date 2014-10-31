@@ -256,7 +256,7 @@ GLuint Shape::loadTexture(const std::string &filename)
     glGenTextures(1, &id);
 
     // Make the texture we just created the new active texture
-    glBindTexture(GL_TEXTURE_2D, GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, id);
 
     // Copy the image data into the OpenGL texture
     gluBuild2DMipmaps(GL_TEXTURE_2D, 3, texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
@@ -268,6 +268,8 @@ GLuint Shape::loadTexture(const std::string &filename)
     // Set coordinate wrapping options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     return id;
 }

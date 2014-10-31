@@ -324,6 +324,7 @@ void MainWindow::fileOpen()
     // feel free to change this.
     activateCanvas3D();
     QString file = QFileDialog::getOpenFileName(this, QString(), "/course/cs123/data/");
+//    QString file = "/course/cs123/data/scenes/ray/cyl_texture_test.xml";
     if (!file.isNull())
     {
         if (file.endsWith(".xml"))
