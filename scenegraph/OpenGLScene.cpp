@@ -226,36 +226,4 @@ void OpenGLScene::instantiateShape(CS123SceneMaterial material)
 
 }
 
-GLuint OpenGLScene::loadTexture(const QString &filename)
-{
-    // Make sure the image file exists
-    QFile file(filename);
-    if (!file.exists())
-        return -1;
 
-    // Load the file into memory
-    QImage image;
-    image.load(file.fileName());
-    image = image.mirrored(false, true);
-    QImage texture = QGLWidget::convertToGLFormat(image);
-
-    // Generate a new OpenGL texture ID to put our image into
-    GLuint id = 0;
-    glGenTextures(1, &id);
-
-    // Make the texture we just created the new active texture
-    glBindTexture(GL_TEXTURE_2D, GL_TEXTURE0);
-
-    // Copy the image data into the OpenGL texture
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
-
-    // Set filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Set coordinate wrapping options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    return id;
-}

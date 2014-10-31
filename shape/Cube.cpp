@@ -28,6 +28,14 @@ void Cube::generatePoints()
                 y = flag * 0.5;
                 m_pList.push_back(Vector3(x, y, z));
                 m_nList.push_back(Vector3(0, flag, 0));
+
+                if(m_material.textureMap && m_material.textureMap->isUsed)
+                {
+                    tex.x = 0.5+x;
+                    tex.y = 0.5+z;
+
+                    m_cList.push_back(calculateTexCoor(tex));
+                }
             }
         }
     }
@@ -46,6 +54,14 @@ void Cube::generatePoints()
                 z = flag * -0.5;
                 m_pList.push_back(Vector3(x, y, z));
                 m_nList.push_back(Vector3(0, 0, -1*flag));
+
+                if(m_material.textureMap && m_material.textureMap->isUsed)
+                {
+                    tex.x = 0.5+x;
+                    tex.y = 0.5-y;
+
+                    m_cList.push_back(calculateTexCoor(tex));
+                }
             }
         }
     }
@@ -64,6 +80,12 @@ void Cube::generatePoints()
                 x = flag * 0.5;
                 m_pList.push_back(Vector3(x, y, z));
                 m_nList.push_back(Vector3(flag, 0, 0));
+                if(m_material.textureMap && m_material.textureMap->isUsed)
+                {
+                    tex.x = 0.5-z;
+                    tex.y = 0.5-y;
+                    m_cList.push_back(calculateTexCoor(tex));
+                }
             }
         }
     }

@@ -195,7 +195,6 @@ public:
     // The normal renderer, which can be used to render arrows for each normal in Shapes.
     NormalRenderer *m_normalRenderer;
 
-    GLuint loadTexture(const QString &filename);
 
 
 protected:

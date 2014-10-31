@@ -20,6 +20,11 @@ void Sphere::generatePoints()
     //bottom of sphere
     m_pList.push_back(Vector3(0, -0.5, 0));
     m_nList.push_back(Vector3(0, -1, 0));
+    if(m_material.textureMap && m_material.textureMap->isUsed)
+    {
+        tex.x = 0; tex.y = 1;
+        m_cList.push_back(calculateTexCoor(tex));
+    }
 
     for(i = 1; i< m_p1; i++)
     {
@@ -32,11 +37,28 @@ void Sphere::generatePoints()
             z = -0.5 * sin(M_PI*u) * sin(2*M_PI*v);
             m_pList.push_back(Vector3(x, y, z));
             m_nList.push_back(Vector3(2*x, 2*y, 2*z));
+            if(m_material.textureMap && m_material.textureMap->isUsed)
+            {
+                REAL theta = atan2(z,x);
+                if(theta< 0)
+                    tex.x = -theta/2/M_PI;
+                else
+                    tex.x = 1 - theta/2/M_PI;
+
+                REAL phi = asin(y/0.5);
+                tex.y = -phi/M_PI + 0.5;
+                m_cList.push_back(calculateTexCoor(tex));
+            }
         }
     }
 
     m_pList.push_back(Vector3(0, 0.5, 0));
     m_nList.push_back(Vector3(0, 1, 0));
+    if(m_material.textureMap && m_material.textureMap->isUsed)
+    {
+        tex.x = 0; tex.y = 0;
+        m_cList.push_back(calculateTexCoor(tex));
+    }
 }
 
 void Sphere::generateTriangle()

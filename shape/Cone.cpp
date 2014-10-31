@@ -10,6 +10,7 @@ Cone::Cone(int p1, int p2, double p3, CS123SceneMaterial m)
 
 void Cone::generatePoints()
 {
+
     float delta_u = 1.0 / (float)m_p1;
     float delta_v = 1.0 / (float)m_p2;
     float u, v, x, y, z;
@@ -30,15 +31,30 @@ void Cone::generatePoints()
             y = -0.5;
             m_pList.push_back(Vector3(x, y, z));
             m_nList.push_back(Vector3(0, -1, 0));
+            if(m_material.textureMap && m_material.textureMap->isUsed)
+            {
+                tex.x = 0.5+x;
+                tex.y = 0.5+z;
+
+                m_cList.push_back(calculateTexCoor(tex));
+
+            }
         }
     }
 
      //the biggest circle is saved twice, but the second time only the reference is stored
     for(it = m_pList.end()-m_p2,j = 0; j < m_p2; j++, it++)
     {
-         v = delta_v * j;
+        v = delta_v * j;
         m_pList.push_back(*it);
         m_nList.push_back(Vector3(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v)));
+        if(m_material.textureMap && m_material.textureMap->isUsed)
+        {
+            tex.x = 0.5+(*it).x;
+            tex.y = 0.5+(*it).z;
+
+            m_cList.push_back(calculateTexCoor(tex));
+        }
     }
 
     //side
@@ -53,6 +69,16 @@ void Cone::generatePoints()
             z = (1-u)/2 * cos(2*M_PI*v);
             m_pList.push_back(Vector3(x, y, z));
             m_nList.push_back(Vector3(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v)));
+            if(m_material.textureMap && m_material.textureMap->isUsed)
+            {
+                tex.y = 0.5-y;
+                REAL theta = atan2(z,x);
+                if(theta< 0)
+                    tex.x = -theta/2/M_PI;
+                else
+                    tex.x = 1 - theta/2/M_PI;
+                m_cList.push_back(calculateTexCoor(tex));
+            }
         }
     }
 
@@ -83,6 +109,13 @@ void Cone::generatePoints()
         Vtipnormal = glm::normalize(Vtipnormal);
         m_pList.push_back(Vtip);
         m_nList.push_back(Vtipnormal);
+        if(m_material.textureMap && m_material.textureMap->isUsed)
+        {
+            tex.x = 0.5;
+            tex.y = 0.5;
+
+            m_cList.push_back(calculateTexCoor(tex));
+        }
     }
 }
 

@@ -8,6 +8,7 @@
 #include <qgl.h>
 #include <SupportCanvas3D.h>
 #include <CS123SceneData.h>
+#include <QFile>
 
 #define MAX_LIMIT 1E+37
 
@@ -31,12 +32,12 @@ public:
 
     std::deque<Vector3> m_pList; //store points
     std::deque<Vector3> m_nList; //store normals
+    std::deque<Vector2> m_cList; //store tex coordinates
+
     std::deque<int> m_tList;//store triangles(index of points)
 
     GLuint vertexBuffer;
     GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
-
-    void vaoDraw();
 
 
 protected:
@@ -48,6 +49,7 @@ protected:
 
 
     std::deque<Vector3>::iterator it;
+    std::deque<Vector2>::iterator itc;
     std::deque<int>::iterator iit;
     void virtual generatePoints() {}
     void virtual generateTriangle() {}
@@ -56,6 +58,15 @@ protected:
     void getEquationRoot(REAL a, REAL b, REAL c, REAL &t1, REAL &t2);
     void checkBodyBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal);
     void checkCircleCapBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal);
+    Vector2 tex;
+    Vector2 calculateTexCoor(Vector2 tex);
+    int texImgWidth, texImgHeight;
+
+
+private:
+    GLuint loadTexture(const std::string &filename);
+
+
 
 
 };
