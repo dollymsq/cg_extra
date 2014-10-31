@@ -14,8 +14,6 @@ SceneviewScene::SceneviewScene()
 SceneviewScene::~SceneviewScene()
 {
     // TODO: [SCENEVIEW] Don't leak memory!
-    if(m_shape != NULL)
-        delete m_shape;
 }
 
 

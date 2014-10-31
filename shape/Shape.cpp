@@ -22,9 +22,9 @@ Shape::Shape(Vector4 pp, Vector4 dd)
 
 Shape::~Shape()
 {
-    m_pList.clear();
-    m_nList.clear();
-    m_tList.clear();
+//    m_pList.clear();
+//    m_nList.clear();
+//    m_tList.clear();
 
 //    glDeleteBuffers(m_vsize, &vertexBuffer);
 

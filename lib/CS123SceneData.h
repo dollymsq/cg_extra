@@ -20,10 +20,11 @@ enum LightType {
 enum PrimitiveType {
     PRIMITIVE_CUBE,
     PRIMITIVE_CONE,
-    PRIMITIVE_CYLINDER,
-    PRIMITIVE_TORUS,
     PRIMITIVE_SPHERE,
+    PRIMITIVE_CYLINDER,
+    PRIMITIVE_TORUS,    
     PRIMITIVE_MESH
+
 };
 
 // Enumeration for types of transformations that can be applied to objects, lights, and cameras.
