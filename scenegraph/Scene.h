@@ -20,6 +20,7 @@ struct primitiveNmatrix
     PrimitiveType shapetype;
     CS123SceneMaterial material;
     glm::mat4 comMatrix;
+
     GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
     int verticesNumber;
 };

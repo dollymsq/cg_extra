@@ -223,7 +223,7 @@ protected:
     double m_sp3;
     int m_vsize;
 
-    virtual void instantiateShape(CS123SceneMaterial material);
+    virtual void instantiateShape();
 
 private:
 

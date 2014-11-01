@@ -42,11 +42,13 @@ public:
     // Use this method to set an internal selection, based on the (x, y) position of the mouse
     // pointer.  This will be used during the "modeler" lab, so don't worry about it for now.
     void setSelection(int x, int y);
+    GLuint loadTexture(const std::string &filename);
 
 private:
     // This will help you during the "modeler" lab, so don't worry about it for now.
     SelectionRecorder m_selectionRecorder;
     int m_selectionIndex;
+    std::map<std::string, GLuint> m_texMap;
 };
 
 #endif // SCENEVIEWSCENE_H

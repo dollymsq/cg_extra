@@ -6,7 +6,7 @@
 class Cylinder : public Shape
 {
 public:
-    Cylinder(int p1, int p2, double p3, CS123SceneMaterial m);
+    Cylinder(int p1, int p2, double p3);
 
 protected:
     void generatePoints();

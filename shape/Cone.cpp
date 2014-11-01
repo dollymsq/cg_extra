@@ -1,7 +1,7 @@
 #include "Cone.h"
 
-Cone::Cone(int p1, int p2, double p3, CS123SceneMaterial m)
-    :Shape(p1, p2, p3,m)
+Cone::Cone(int p1, int p2, double p3)
+    :Shape(p1, p2, p3)
 {
     m_p2 = max(3, m_p2);
     generatePoints();
@@ -31,12 +31,11 @@ void Cone::generatePoints()
             y = -0.5;
             m_pList.push_back(Vector3(x, y, z));
             m_nList.push_back(Vector3(0, -1, 0));
-            if(m_material.textureMap && m_material.textureMap->isUsed)
             {
                 tex.x = 0.5+x;
                 tex.y = 0.5+z;
 
-                m_cList.push_back(calculateTexCoor(tex));
+                m_cList.push_back(tex);
 
             }
         }
@@ -48,12 +47,11 @@ void Cone::generatePoints()
         v = delta_v * j;
         m_pList.push_back(*it);
         m_nList.push_back(Vector3(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v)));
-        if(m_material.textureMap && m_material.textureMap->isUsed)
         {
             tex.x = 0.5+(*it).x;
             tex.y = 0.5+(*it).z;
 
-            m_cList.push_back(calculateTexCoor(tex));
+            m_cList.push_back(tex);
         }
     }
 
@@ -69,7 +67,6 @@ void Cone::generatePoints()
             z = (1-u)/2 * cos(2*M_PI*v);
             m_pList.push_back(Vector3(x, y, z));
             m_nList.push_back(Vector3(2/sqrt(5)*sin(2*M_PI*v), 1/sqrt(5), 2/sqrt(5)*cos(2*M_PI*v)));
-            if(m_material.textureMap && m_material.textureMap->isUsed)
             {
                 tex.y = 0.5-y;
                 REAL theta = atan2(z,x);
@@ -77,7 +74,7 @@ void Cone::generatePoints()
                     tex.x = -theta/2/M_PI;
                 else
                     tex.x = 1 - theta/2/M_PI;
-                m_cList.push_back(calculateTexCoor(tex));
+                m_cList.push_back(tex);
             }
         }
     }
@@ -109,12 +106,11 @@ void Cone::generatePoints()
         Vtipnormal = glm::normalize(Vtipnormal);
         m_pList.push_back(Vtip);
         m_nList.push_back(Vtipnormal);
-        if(m_material.textureMap && m_material.textureMap->isUsed)
         {
             tex.x = 0.5;
             tex.y = 0.5;
 
-            m_cList.push_back(calculateTexCoor(tex));
+            m_cList.push_back(tex);
         }
     }
 }

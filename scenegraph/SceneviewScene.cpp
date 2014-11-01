@@ -27,11 +27,24 @@ void SceneviewScene::init()
     std::vector<primitiveNmatrix>::iterator it;
     for(it = m_tbd.begin(); it != m_tbd.end(); it++)
     {
-        m_styp = (*it).shapetype;
+        primitiveNmatrix *m = &(*it);
+        m_styp = m->shapetype;
 
-        instantiateShape((*it).material);
-        (*it).m_vaoID = m_shape->m_vaoID;
-        (*it).verticesNumber = m_shape->getVerticesNumber();
+        std::map<std::string, GLuint>::iterator itm;
+        instantiateShape();
+        m->m_vaoID = m_shape->m_vaoID;
+        if(m->material.textureMap->isUsed)
+        {
+            itm = m_texMap.find(m->material.textureMap->filename);
+            if (itm != m_texMap.end())
+            {
+                m_texMap[m->material.textureMap->filename] = loadTexture(m->material.textureMap->filename);
+                m->material.textureMap->texid = m_texMap[m->material.textureMap->filename];
+            }
+            else
+                m->material.textureMap->texid = m_texMap[m->material.textureMap->filename];
+        }
+        m->verticesNumber = m_shape->getVerticesNumber();
     }
 }
 
@@ -74,6 +87,7 @@ void SceneviewScene::renderGeometry()
         glBindVertexArray((*it).m_vaoID);
         glDrawArrays(GL_TRIANGLES, 0, (*it).verticesNumber/* Number of vertices to draw */);
         glBindVertexArray(0);
+
     }
 
 }
@@ -118,4 +132,35 @@ void SceneviewScene::decideParameter()
         m_sp2 = 11;
     }
 
+}
+
+GLuint SceneviewScene::loadTexture(const std::string &filename)
+{
+    // Make sure the image file exists
+    QFile file(QString::fromStdString(filename));
+    if (!file.exists())
+        return -1;
+
+    // Load the file into memory
+    QImage image;
+    image.load(file.fileName());
+    image = image.mirrored(false, true);
+    QImage texture = QGLWidget::convertToGLFormat(image);
+
+    // Generate a new OpenGL texture ID to put our image into
+    GLuint id = 0;
+    glGenTextures(1, &id);
+
+    // Make the texture we just created the new active texture
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    // Set coordinate wrapping options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,texture.width(), texture.height(),0, GL_RGBA,GL_UNSIGNED_BYTE, texture.bits());
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return id;
 }

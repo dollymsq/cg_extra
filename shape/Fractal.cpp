@@ -1,7 +1,7 @@
 #include "Fractal.h"
 
-Fractal::Fractal(int p1, int p2, double p3, CS123SceneMaterial m)
-    :Shape(p1, p2, p3, m)
+Fractal::Fractal(int p1, int p2, double p3)
+    :Shape(p1, p2, p3)
 {
     m_p1 = min(7, m_p1/10);
     generatePoints();
@@ -35,6 +35,12 @@ void Fractal::generatePoints_helper(Vector3 up, Vector3 down, Vector3 left, Vect
         m_nList.push_back(normal2);m_nList.push_back(normal2);m_nList.push_back(normal2);
         m_nList.push_back(normal3);m_nList.push_back(normal3);m_nList.push_back(normal3);
         m_nList.push_back(normal4);m_nList.push_back(normal4);m_nList.push_back(normal4);
+
+        m_cList.push_back(Vector2(sqrt(2)*up.z+0.5, up.y+0.5));m_cList.push_back(Vector2(sqrt(2)*down.z+0.5 ,down.y+0.5));m_cList.push_back(Vector2(sqrt(2)*right.z+0.5,right.y+0.5));
+        m_cList.push_back(Vector2(up.x+0.5, sqrt(2)*up.z+0.5));m_cList.push_back(Vector2(right.y+0.5, sqrt(2)*right.z+0.5));m_cList.push_back(Vector2(left.y+0.5, sqrt(2)*left.z+0.5));
+        m_cList.push_back(Vector2(sqrt(2)*up.z+0.5, up.y+0.5));m_cList.push_back(Vector2(sqrt(2)*left.z+0.5 ,left.y+0.5));m_cList.push_back(Vector2(sqrt(2)*down.z+0.5,down.y+0.5));
+        m_cList.push_back(Vector2(left.x+0.5, sqrt(2)*left.z+0.5));m_cList.push_back(Vector2(right.y+0.5, sqrt(2)*right.z+0.5));m_cList.push_back(Vector2(down.y+0.5, sqrt(2)*down.z+0.5));
+
     }
     else
     {
@@ -66,12 +72,26 @@ void Fractal::drawShape()
         it = m_nList.begin() + i+2;
         Vector3 n3 = *it;
 
-        vertexData[18*j + 0] = float(v1.x); vertexData[18*j + 1] = float(v1.y); vertexData[18*j + 2] = float(v1.z);
-        vertexData[18*j + 3] = float(n1.x); vertexData[18*j + 4] = float(n1.y); vertexData[18*j + 5] = float(n1.z);
-        vertexData[18*j + 6] = float(v2.x); vertexData[18*j + 7] = float(v2.y); vertexData[18*j + 8] = float(v2.z);
-        vertexData[18*j + 9] = float(n2.x); vertexData[18*j + 10] = float(n2.y); vertexData[18*j + 11] = float(n2.z);
-        vertexData[18*j + 12] = float(v3.x); vertexData[18*j + 13] = float(v3.y); vertexData[18*j + 14] = float(v3.z);
-        vertexData[18*j + 15] = float(n3.x); vertexData[18*j + 16] = float(n3.y); vertexData[18*j + 17] = float(n3.z);
+        itc = m_cList.begin() + i;
+        Vector2 c1 = *itc;
+
+        itc = m_cList.begin() + i + 1;
+        Vector2 c2 = *itc;
+
+        itc = m_cList.begin() + i + 2;
+        Vector2 c3 = *itc;
+
+        vertexData[24*j + 0] = float(v1.x); vertexData[24*j + 1] = float(v1.y); vertexData[24*j + 2] = float(v1.z);
+        vertexData[24*j + 3] = float(n1.x); vertexData[24*j + 4] = float(n1.y); vertexData[24*j + 5] = float(n1.z);
+        vertexData[24*j + 6] = float(c1.x); vertexData[24*j + 7] = float(c1.y);
+
+        vertexData[24*j + 8] = float(v2.x); vertexData[24*j + 9] = float(v2.y); vertexData[24*j + 10] = float(v2.z);
+        vertexData[24*j + 11] = float(n2.x); vertexData[24*j + 12] = float(n2.y); vertexData[24*j + 13] = float(n2.z);
+        vertexData[24*j + 14] = float(c2.x); vertexData[24*j + 15] = float(c2.y);
+
+        vertexData[24*j + 16] = float(v3.x); vertexData[24*j + 17] = float(v3.y); vertexData[24*j + 18] = float(v3.z);
+        vertexData[24*j + 19] = float(n3.x); vertexData[24*j + 20] = float(n3.y); vertexData[24*j + 21] = float(n3.z);
+        vertexData[24*j + 22] = float(c3.x); vertexData[24*j + 23] = float(c3.y);
     }
 }
 

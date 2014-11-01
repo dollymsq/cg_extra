@@ -122,7 +122,37 @@ void OpenGLScene::applyMaterial(const CS123SceneMaterial &material)
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, material.textureMap->texid);
         glActiveTexture(GL_TEXTURE0);
-    } else {
+
+
+//        QFile file("/course/cs123/data/image/BoneHead.jpg");
+
+//        QImage image;
+//        image.load(file.fileName());
+//        image = image.mirrored(false, true);
+//        QImage texture = QGLWidget::convertToGLFormat(image);
+
+//        // Generate a new OpenGL texture ID to put our image into
+//        GLuint id = 0;
+//        glGenTextures(1, &id);
+
+//        // Make the texture we just created the new active texture
+//        glBindTexture(GL_TEXTURE_2D, GL_TEXTURE1);
+
+//        // Copy the image data into the OpenGL texture
+//        gluBuild2DMipmaps(GL_TEXTURE_2D, 3, texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
+
+//        // Set filtering options
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+//        // Set coordinate wrapping options
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+//        glBindTexture(GL_TEXTURE_2D, id);
+    }
+    else
+    {
         glUniform1i(m_uniformLocs["useTexture"], 0);
     }
 }
@@ -175,7 +205,7 @@ void OpenGLScene::setLight(const CS123SceneLightData &light)
             light.function.x, light.function.y, light.function.z);
 }
 
-void OpenGLScene::instantiateShape(CS123SceneMaterial material)
+void OpenGLScene::instantiateShape()
 {
     if(m_shape!= NULL)
     {
@@ -185,22 +215,22 @@ void OpenGLScene::instantiateShape(CS123SceneMaterial material)
     switch(m_styp)
     {
     case SHAPE_CUBE:
-        m_shape = new Cube(m_sp1, m_sp2, m_sp3, material);
+        m_shape = new Cube(m_sp1, m_sp2, m_sp3);
         break;
     case SHAPE_CONE:
-        m_shape = new Cone(m_sp1, m_sp2, m_sp3, material);
+        m_shape = new Cone(m_sp1, m_sp2, m_sp3);
         break;
     case SHAPE_CYLINDER:
-        m_shape = new Cylinder(m_sp1, m_sp2, m_sp3, material);
+        m_shape = new Cylinder(m_sp1, m_sp2, m_sp3);
         break;
     case SHAPE_SPHERE:
-        m_shape = new Sphere(m_sp1, m_sp2, m_sp3, material);
+        m_shape = new Sphere(m_sp1, m_sp2, m_sp3);
         break;
     case SHAPE_TORUS:
-        m_shape = new Torus(m_sp1, m_sp2, m_sp3, material);
+        m_shape = new Torus(m_sp1, m_sp2, m_sp3);
         break;
     case SHAPE_FRACTAL:
-        m_shape = new Fractal(m_sp1, m_sp2, m_sp3, material);
+        m_shape = new Fractal(m_sp1, m_sp2, m_sp3);
         break;
     default:
         m_normalRenderer->clearArrays();

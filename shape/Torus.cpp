@@ -1,7 +1,7 @@
 #include "Torus.h"
 
-Torus::Torus(int p1, int p2, double p3, CS123SceneMaterial m)
-    :Shape(p1, p2, p3, m)
+Torus::Torus(int p1, int p2, double p3)
+    :Shape(p1, p2, p3)
 {
     m_p1 = max(3, m_p1);
     m_p2 = max(3, m_p2);
@@ -35,6 +35,11 @@ void Torus::generatePoints()
             z = r * sin(2 * M_PI*v);
             m_pList.push_back(Vector3(x, y, z));
             m_nList.push_back(Vector3(cos(2*M_PI*v) * cos(2*M_PI*u), cos(2*M_PI*v) * sin(2*M_PI*u), sin(2 * M_PI*v)));
+            {
+                tex.x = u;
+                tex.y = v;
+                m_cList.push_back(tex);
+            }
         }
     }
 }

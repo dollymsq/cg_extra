@@ -62,16 +62,17 @@ void ShapesScene::renderGeometry()
         m_sp2 = settings.shapeParameter2;
         m_sp3 = settings.shapeParameter3;
         m_styp = settings.shapeType;
-        instantiateShape(m_material);
+        instantiateShape();
     }
     applyMaterial(m_material);
 
-//    if(m_shape != NULL)
-//        m_shapevaoDraw();
-    glBindVertexArray(m_shape->m_vaoID);
-    m_vsize = m_shape->getVerticesNumber();
-    glDrawArrays(GL_TRIANGLES, 0, m_vsize/* Number of vertices to draw */);
-    glBindVertexArray(0);
+    if(m_shape != NULL)
+    {
+        glBindVertexArray(m_shape->m_vaoID);
+        m_vsize = m_shape->getVerticesNumber();
+        glDrawArrays(GL_TRIANGLES, 0, m_vsize/* Number of vertices to draw */);
+        glBindVertexArray(0);
+    }
 
 }
 

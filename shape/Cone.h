@@ -6,7 +6,7 @@
 class Cone : public Shape
 {
 public:
-    Cone(int p1, int p2, double p3, CS123SceneMaterial m);
+    Cone(int p1, int p2, double p3);
 
 protected:
     void generatePoints();

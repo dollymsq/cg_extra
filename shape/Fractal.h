@@ -5,7 +5,7 @@
 class Fractal : public Shape
 {
 public:
-    Fractal(int p1, int p2, double p3, CS123SceneMaterial m);
+    Fractal(int p1, int p2, double p3);
 
 protected:
     void generatePoints();

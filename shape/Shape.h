@@ -15,7 +15,7 @@
 class Shape
 {
 public:
-    Shape(int p1, int p2, double p3, CS123SceneMaterial m);
+    Shape(int p1, int p2, double p3);
     Shape(Vector4 pp, Vector4 dd);
 
     virtual ~ Shape();
@@ -39,7 +39,7 @@ public:
     GLuint vertexBuffer;
     GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
 
-    GLuint loadTexture(const std::string &filename);
+
 
 
 protected:
@@ -61,7 +61,7 @@ protected:
     void checkBodyBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal);
     void checkCircleCapBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal);
     Vector2 tex;
-    Vector2 calculateTexCoor(Vector2 tex);
+//    Vector2 calculateTexCoor(Vector2 tex);
     int texImgWidth, texImgHeight;
 
 
