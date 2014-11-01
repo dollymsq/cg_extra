@@ -122,38 +122,12 @@ void OpenGLScene::applyMaterial(const CS123SceneMaterial &material)
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, material.textureMap->texid);
         glActiveTexture(GL_TEXTURE0);
-
-
-//        QFile file("/course/cs123/data/image/BoneHead.jpg");
-
-//        QImage image;
-//        image.load(file.fileName());
-//        image = image.mirrored(false, true);
-//        QImage texture = QGLWidget::convertToGLFormat(image);
-
-//        // Generate a new OpenGL texture ID to put our image into
-//        GLuint id = 0;
-//        glGenTextures(1, &id);
-
-//        // Make the texture we just created the new active texture
-//        glBindTexture(GL_TEXTURE_2D, GL_TEXTURE1);
-
-//        // Copy the image data into the OpenGL texture
-//        gluBuild2DMipmaps(GL_TEXTURE_2D, 3, texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
-
-//        // Set filtering options
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-//        // Set coordinate wrapping options
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-//        glBindTexture(GL_TEXTURE_2D, id);
     }
     else
     {
         glUniform1i(m_uniformLocs["useTexture"], 0);
+        glUniform1f(m_uniformLocs["blend"], material.blend);
+
     }
 }
 

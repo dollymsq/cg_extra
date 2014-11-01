@@ -37,12 +37,12 @@ void SceneviewScene::init()
         {
             itm = m_texMap.find(m->material.textureMap->filename);
             if (itm != m_texMap.end())
+                m->material.textureMap->texid = m_texMap[m->material.textureMap->filename];
+            else
             {
                 m_texMap[m->material.textureMap->filename] = loadTexture(m->material.textureMap->filename);
                 m->material.textureMap->texid = m_texMap[m->material.textureMap->filename];
             }
-            else
-                m->material.textureMap->texid = m_texMap[m->material.textureMap->filename];
         }
         m->verticesNumber = m_shape->getVerticesNumber();
     }
