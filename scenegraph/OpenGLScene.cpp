@@ -116,12 +116,11 @@ void OpenGLScene::applyMaterial(const CS123SceneMaterial &material)
     glUniform1f(m_uniformLocs["shininess"], material.shininess);
     if (material.textureMap && material.textureMap->isUsed && material.textureMap->texid) {
         glUniform1i(m_uniformLocs["useTexture"], 1);
-        glUniform1i(m_uniformLocs["tex"], 1);
+        glUniform1i(m_uniformLocs["tex"], 0);
         glUniform1f(m_uniformLocs["blend"], material.blend);
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, material.textureMap->texid);
         glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, material.textureMap->texid);
     }
     else
     {
