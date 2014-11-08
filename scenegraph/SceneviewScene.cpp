@@ -136,6 +136,7 @@ void SceneviewScene::decideParameter()
 
 GLuint SceneviewScene::loadTexture(const std::string &filename)
 {
+    glActiveTexture(GL_TEXTURE0);
     // Make sure the image file exists
     QFile file(QString::fromStdString(filename));
     if (!file.exists())
@@ -158,7 +159,15 @@ GLuint SceneviewScene::loadTexture(const std::string &filename)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,texture.width(), texture.height(),0, GL_RGBA,GL_UNSIGNED_BYTE, texture.bits());
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+
+    const uchar *data = texture.bits();
+    int width = texture.width();
+    int height = texture.height();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,GL_UNSIGNED_BYTE, data);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 

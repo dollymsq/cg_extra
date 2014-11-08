@@ -54,7 +54,7 @@ void Fractal::generatePoints_helper(Vector3 up, Vector3 down, Vector3 left, Vect
 
 void Fractal::drawShape()
 {
-    int i, j;
+    uint i, j;
     for( i = 0, j = 0; i < m_pList.size(); i = i+3, j++)
     {
         it = m_pList.begin() + i;
