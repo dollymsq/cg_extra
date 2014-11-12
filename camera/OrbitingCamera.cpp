@@ -42,6 +42,15 @@ glm::mat4x4 OrbitingCamera::getViewMatrix() const
     return m_viewMatrix;
 }
 
+glm::mat4x4 OrbitingCamera::getScaleMatrix() const
+{
+    REAL scaley = 1/(settings.cameraFar*tan(settings.cameraFov/360*M_PI));
+    REAL scalex = scaley / m_aspectRatio;
+    return glm::mat4(scalex, 0, 0, 0,
+                        0, scaley, 0, 0,
+                        0, 0, 1/settings.cameraFar, 0,
+                        0, 0, 0, 1);
+}
 void OrbitingCamera::mouseDown(int x, int y)
 {
     m_oldX = x;

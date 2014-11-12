@@ -7,6 +7,7 @@ class Cube : public Shape
 {
 public:
     Cube(int p1, int p2, double p3);
+    Cube(Vector4 pp, Vector4 dd);
 
 protected:
     void generatePoints();

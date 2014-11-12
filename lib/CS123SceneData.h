@@ -46,12 +46,13 @@ struct CS123SceneColor
         float channels[4]; // points to the same four floats above...
     };
     CS123SceneColor() : r(0), g(0), b(0), a(0) {}
-    CS123SceneColor(float red, float green, float blue, float alpha = 255)
+    CS123SceneColor(float red, float green, float blue, float alpha = 1)
         : r(red), g(green), b(blue), a(alpha) {}
 
    // @TODO: [OPTIONAL] You can implement some operators here for color arithmetic.
         CS123SceneColor operator* (const float w) const { return CS123SceneColor(r*w, g*w, b*w, a);}
         CS123SceneColor operator+ (const CS123SceneColor oth) const { return CS123SceneColor(r+oth.r, g+oth.g, b+oth.b, a);}
+        bool exceed() const{ return r > 1 || g > 1 || b > 1 || r < 0 || g < 0 || b < 0;}
 
 };
 

@@ -61,7 +61,6 @@ protected:
     void checkBodyBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal);
     void checkCircleCapBoundary(REAL tmpt, REAL &tmin, Vector3 n, Vector3 &tnormal);
     Vector2 tex;
-//    Vector2 calculateTexCoor(Vector2 tex);
     int texImgWidth, texImgHeight;
 
 

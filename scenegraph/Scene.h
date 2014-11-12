@@ -39,6 +39,7 @@ public:
 
     void setSceneLight(std::vector<CS123SceneLightData> sl);
     void setPrimitiveList(std::vector<primitiveNmatrix> pl);
+    void setGlobal(const CS123SceneGlobalData &global);
 
 protected:
 
@@ -49,7 +50,6 @@ protected:
     virtual void addLight(const CS123SceneLightData &sceneLight);
 
     // Sets the global data for the scene.
-    virtual void setGlobal(const CS123SceneGlobalData &global);
 
     void analyzeNode(CS123SceneNode* rnode, glm::mat4 CTM);
 

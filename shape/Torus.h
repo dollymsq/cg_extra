@@ -5,6 +5,7 @@ class Torus : public Shape
 {
 public:
     Torus(int p1, int p2, double p3);
+    Torus(Vector4 pp, Vector4 dd);
 
 protected:
     void generatePoints();

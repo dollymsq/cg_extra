@@ -10,6 +10,11 @@ Torus::Torus(int p1, int p2, double p3)
     generateTriangle();
 }
 
+Torus::Torus(Vector4 pp, Vector4 dd)
+    :Shape(pp, dd)
+{
+}
+
 void Torus::generatePoints()
 {
     float delta_u = 1.0 / (float)m_p1;

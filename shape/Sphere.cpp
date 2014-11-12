@@ -9,6 +9,11 @@ Sphere::Sphere(int p1, int p2, double p3)
     generateTriangle();
 }
 
+Sphere::Sphere(Vector4 pp, Vector4 dd)
+    :Shape(pp, dd)
+{
+}
+
 void Sphere::generatePoints()
 {
     float delta_u = 1.0 / (float)m_p1;

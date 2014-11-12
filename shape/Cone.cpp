@@ -8,6 +8,11 @@ Cone::Cone(int p1, int p2, double p3)
     generateTriangle();
 }
 
+Cone::Cone(Vector4 pp, Vector4 dd)
+    :Shape(pp, dd)
+{
+}
+
 void Cone::generatePoints()
 {
 

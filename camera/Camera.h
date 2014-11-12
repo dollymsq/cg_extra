@@ -23,6 +23,7 @@ public:
     // Return the view matrix for the current camera settings.
     virtual glm::mat4x4 getViewMatrix() const = 0;
 
+    virtual glm::mat4x4 getScaleMatrix() const = 0;
     //
     // The following functions are called for mouse events on the 3D canvas tab.
     //

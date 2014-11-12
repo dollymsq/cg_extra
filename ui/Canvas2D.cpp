@@ -259,12 +259,38 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
 {
     if (m_scene)
     {
-        // @TODO: raytrace the scene based on settings
-        //        YOU MUST FILL THIS IN FOR INTERSECT/RAY
+        this->resize(width,height);
+        Vector4 eye(0,0,0,1);
 
-        // If you want the interface to stay responsive, make sure to call
-        // QCoreApplication::processEvents() periodically during the rendering.
+        Vector4 filmP(0,0,-1,1);
+        glm::mat4 Mc2w = camera->getScaleMatrix() * camera->getViewMatrix();
+        Mc2w = glm::inverse(Mc2w);
+        Vector4 tp = Mc2w * eye;
+        eye = tp;
 
+        if(settings.useTextureMapping)
+            m_scene->setTextureImage();
+
+        for(int i = 0; i< height; i++)
+        {
+            for(int j = 0; j< width; j++)
+            {
+                //screen to film done(camera)
+                filmP.x = 2.0*(float)j/(float)width-1.0;
+                filmP.y = 1.0-2.0*(float)i/(float)height;
+
+                //to generate ray in world space, the filmP will corresponds to d, copy that
+                Vector4 dir = m_scene->generateRay(eye, filmP, Mc2w);
+
+                //calculate intersection point if any and its corresponding normal
+                if(i == 251 && j == 164)
+                {
+                    tp = filmP;
+                }
+                m_scene->trace(eye,dir,data()[i*width + j]);
+
+            }
+        }
     }
 }
 
