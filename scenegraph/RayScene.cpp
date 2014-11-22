@@ -34,9 +34,10 @@ void RayScene::trace(Vector4 eye, Vector4 dir, BGRA &canvascolor)
 CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth)
 {
     Vector3 tnormal(0, 0, 0); // normal at point t
+    int intersectId = 0;
     CS123SceneMaterial tmaterial;
     Vector2 tex(0,0);
-    REAL t = calculateIntersection(eye,dir,tnormal,tmaterial,tex);
+    REAL t = calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
     CS123SceneColor flcolor;
     flcolor = flcolor * 0;
 
@@ -173,7 +174,7 @@ bool RayScene::isInShadow(Vector3 object, Vector3 raydir, REAL tmin)
         return false;
 }
 
-REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo)
+REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
 {
     Shape* m_vshape = NULL;
     glm::mat4 Mw2o;
@@ -221,6 +222,7 @@ REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal
             tpostmin = t;
             normal = transNormalo2w(tnormal,glm::inverse((*it).comMatrix));
             tmaterial = (*it).material;
+            intersectId = (*it).id;
         }
     }
     return tpostmin;
