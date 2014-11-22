@@ -184,7 +184,7 @@ REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal
     REAL t = MAX_LIMIT; // to compare
     textureCo = Vector2(0,0);
 
-    for(it = m_tbd.begin(); it != m_tbd.end(); it++)
+    for(it = m_tbd.begin(); it != m_tbd.end() && (*it).id != intersectId; it++)
     {
         if((*it).shapetype!= PRIMITIVE_CUBE &&(*it).shapetype!= PRIMITIVE_CONE &&(*it).shapetype!= PRIMITIVE_CYLINDER && (*it).shapetype!= PRIMITIVE_SPHERE)
             continue;
