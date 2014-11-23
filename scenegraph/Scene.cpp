@@ -9,6 +9,7 @@ Scene::Scene() //: m_camera(NULL)
 {
     m_scenelights.clear();
     m_tbd.clear();
+    counter = 0;
 }
 
 Scene::~Scene()
@@ -46,6 +47,7 @@ void Scene::addPrimitive(const CS123ScenePrimitive &scenePrimitive, const glm::m
     primitiveNmatrix *t = new primitiveNmatrix;
     t->shapetype = scenePrimitive.type;
     t->comMatrix = matrix;
+    t->id = counter++;
 
     CS123SceneMaterial& mat = t->material;
 

@@ -17,6 +17,7 @@ class CS123ISceneParser;
 
 struct primitiveNmatrix
 {
+    int id;
     PrimitiveType shapetype;
     CS123SceneMaterial material;
     glm::mat4 comMatrix;
@@ -40,6 +41,8 @@ public:
     void setSceneLight(std::vector<CS123SceneLightData> sl);
     void setPrimitiveList(std::vector<primitiveNmatrix> pl);
     void setGlobal(const CS123SceneGlobalData &global);
+
+    int counter;
 
 protected:
 

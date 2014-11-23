@@ -34,7 +34,7 @@ void RayScene::trace(Vector4 eye, Vector4 dir, BGRA &canvascolor)
 CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth)
 {
     Vector3 tnormal(0, 0, 0); // normal at point t
-    int intersectId = 0;
+    int intersectId = -1;
     CS123SceneMaterial tmaterial;
     Vector2 tex(0,0);
     REAL t = calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
@@ -43,7 +43,7 @@ CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth)
 
     if(t < MAX_LIMIT && recursiondepth < RECURSION_LIMIT)
     {
-        flcolor = illuminatePoint(eye, dir, t, tnormal, tmaterial,tex,recursiondepth);
+        flcolor = illuminatePoint(eye, dir, t, tnormal, tmaterial,tex,intersectId,recursiondepth);
     }
     return flcolor;
 }
@@ -59,7 +59,7 @@ Vector3 RayScene::transNormalo2w(Vector3 normal,glm::mat4 M)
     return glm::normalize(tp);
 }
 
-CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo, int recursiondepth)
+CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo, int intersectId, int recursiondepth)
 {
     CS123SceneColor tcolor;
     Vector3 pos_obj(eye.x + t*dir.x, eye.y + t*dir.y, eye.z + t*dir.z);
@@ -86,7 +86,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
             //whether in the shadow
             if(settings.useShadows)
             {
-                if(isInShadow(pos_obj, lm, mag))
+                if(isInShadow(pos_obj, lm, mag, intersectId))
                     continue;
             }
 
@@ -117,7 +117,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
             lightdirInverse = glm::normalize(lightdirInverse);
             if(settings.useShadows)
             {
-                if(isInShadow(pos_obj, lightdirInverse, MAX_LIMIT))
+                if(isInShadow(pos_obj, lightdirInverse, MAX_LIMIT, intersectId))
                     continue;
             }
 
@@ -159,7 +159,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
     return tcolor;
 }
 
-bool RayScene::isInShadow(Vector3 object, Vector3 raydir, REAL tmin)
+bool RayScene::isInShadow(Vector3 object, Vector3 raydir, REAL tmin, int intersectId)
 {
     Vector4 objectv4(object.x, object.y, object.z, 1);
     Vector4 shadowray(raydir.x, raydir.y, raydir.z, 0);
@@ -167,7 +167,7 @@ bool RayScene::isInShadow(Vector3 object, Vector3 raydir, REAL tmin)
     Vector3 tnormal(0, 0, 0); // normal at point t
     CS123SceneMaterial tmaterial;
     Vector2 tex(0,0);
-    REAL t = calculateIntersection(objectv4,shadowray,tnormal,tmaterial,tex);
+    REAL t = calculateIntersection(objectv4,shadowray,tnormal,tmaterial,tex, intersectId);
     if( t < tmin)
         return true;
     else
@@ -184,9 +184,11 @@ REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal
     REAL t = MAX_LIMIT; // to compare
     textureCo = Vector2(0,0);
 
-    for(it = m_tbd.begin(); it != m_tbd.end() && (*it).id != intersectId; it++)
+    for(it = m_tbd.begin(); it != m_tbd.end(); it++)
     {
         if((*it).shapetype!= PRIMITIVE_CUBE &&(*it).shapetype!= PRIMITIVE_CONE &&(*it).shapetype!= PRIMITIVE_CYLINDER && (*it).shapetype!= PRIMITIVE_SPHERE)
+            continue;
+        if((*it).id == intersectId)
             continue;
         Mw2o = glm::inverse((*it).comMatrix);
         p = Mw2o*start;
