@@ -38,7 +38,6 @@ void Scene::parse(Scene *sceneToFill, CS123ISceneParser *parser)
 
     glm::mat4 tM = glm::mat4();
 
-
     sceneToFill->analyzeNode(rootnode, tM);
 }
 

@@ -271,6 +271,8 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
         if(settings.useTextureMapping)
             m_scene->setTextureImage();
 
+        std::cout<< "Building kdtree"<<endl;
+
         for(int i = 0; i< height; i++)
         {
             for(int j = 0; j< width; j++)

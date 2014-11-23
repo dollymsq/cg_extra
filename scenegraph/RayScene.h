@@ -26,6 +26,7 @@ public:
     void trace(Vector4 eye, Vector4 dir, BGRA &canvascolor);
     REAL calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial &tmaterial, Vector2 &textureCo, int &intersectId);
     void setTextureImage();
+    void builKdtree();
 
 protected:
 
@@ -42,6 +43,7 @@ private:
     Vector4 p, d; // eye and direction in object space
     Vector4 pw, dw; // eye and direction in world space
     std::map<std::string, QImage> texImgPair;
+    Vector2 xRange, yRange, zRange;
 };
 
 #endif // RAYSCENE_H
