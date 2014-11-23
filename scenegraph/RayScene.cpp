@@ -25,19 +25,28 @@ Vector4 RayScene::generateRay(Vector4 eye, Vector4 filmP, glm::mat4 M)
 
 void RayScene::trace(Vector4 eye, Vector4 dir, BGRA &canvascolor)
 {
-    CS123SceneColor flcolor= rayTrace(eye, dir, 0);
+    int intersectId = -1;
+
+    CS123SceneColor flcolor= rayTrace(eye, dir, 0, intersectId);
     canvascolor.b = round(255.0 * flcolor.b);
     canvascolor.g = round(255.0 * flcolor.g);
     canvascolor.r = round(255.0 * flcolor.r);
 }
 
-CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth)
+CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth, int intersectId)
 {
     Vector3 tnormal(0, 0, 0); // normal at point t
-    int intersectId = -1;
     CS123SceneMaterial tmaterial;
     Vector2 tex(0,0);
+
+//    std::cout<<recursiondepth<<"---------------------"<<endl;
+//    std::cout<<intersectId<<endl;
+
     REAL t = calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
+
+//    std::cout<<intersectId<<endl;
+//    std::cout<<t<<endl;
+
     CS123SceneColor flcolor;
     flcolor = flcolor * 0;
 
@@ -136,24 +145,15 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
     }
 
     //reflected part
-    if(settings.useReflection)
+    if(settings.useReflection && matrl.cReflective.b != 0 && matrl.cReflective.g != 0 && matrl.cReflective.r != 0)
     {
         Vector3 rflvr= - glm::reflect(viewray, n);
         Vector4 rflvrv4 = glm::normalize(Vector4(rflvr.x, rflvr.y, rflvr.z, 0));
-        CS123SceneColor nextPointColor = rayTrace(pos_objv4,rflvrv4,++recursiondepth);
+        CS123SceneColor nextPointColor = rayTrace(pos_objv4,rflvrv4,++recursiondepth, intersectId);
 
-//        if (nextPointColor.exceed())
-//        {
-//            std::cout<<tcolor.b<<", "<<tcolor.g<<", "<<tcolor.r;
-//        }
         tcolor.b += m_sceneglobalData.ks * matrl.cReflective.b * nextPointColor.b;
         tcolor.g += m_sceneglobalData.ks * matrl.cReflective.g * nextPointColor.g;
         tcolor.r += m_sceneglobalData.ks * matrl.cReflective.r * nextPointColor.r;
-
-//        if( tcolor.exceed())
-//        {
-//            std::cout<<tcolor.b<<", "<<tcolor.g<<", "<<tcolor.r;
-//        }
     }
 
     return tcolor;
@@ -181,6 +181,7 @@ REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal
     std::vector<primitiveNmatrix>::iterator it;
     Vector3 tnormal(0,0,0);
     REAL tpostmin = MAX_LIMIT;
+    int tpId = -1;
     REAL t = MAX_LIMIT; // to compare
     textureCo = Vector2(0,0);
 
@@ -224,9 +225,10 @@ REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal
             tpostmin = t;
             normal = transNormalo2w(tnormal,glm::inverse((*it).comMatrix));
             tmaterial = (*it).material;
-            intersectId = (*it).id;
+            tpId = (*it).id;
         }
     }
+    intersectId = tpId;
     return tpostmin;
 }
 

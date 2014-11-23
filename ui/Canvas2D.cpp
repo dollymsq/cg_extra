@@ -283,12 +283,13 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                 Vector4 dir = m_scene->generateRay(eye, filmP, Mc2w);
 
                 //calculate intersection point if any and its corresponding normal
-                if(i == 251 && j == 164)
+                if(i == 297 && j == 484)
                 {
                     tp = filmP;
                 }
-                m_scene->trace(eye,dir,data()[i*width + j]);
+//                std::cout<<"Image pos"<< j<<", "<<i<<"========================="<<endl;
 
+                m_scene->trace(eye,dir,data()[i*width + j]);
             }
         }
     }

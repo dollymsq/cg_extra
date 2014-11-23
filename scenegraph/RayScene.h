@@ -31,7 +31,7 @@ protected:
 
     Vector3 transNormalo2w(Vector3 normal,glm::mat4 M);
 
-    CS123SceneColor rayTrace(Vector4 eye, Vector4 dir, int recursiondepth);
+    CS123SceneColor rayTrace(Vector4 eye, Vector4 dir, int recursiondepth, int intersectId);
     CS123SceneColor illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo, int intersectId, int recursiondepth);
     bool isInShadow(Vector3 object, Vector3 raydir, REAL tmin, int intersectId);
     Vector3 diffuseShade(Vector3 lightray, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo);
