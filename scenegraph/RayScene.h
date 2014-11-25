@@ -15,7 +15,23 @@
  *
  *  Students will implement this class as necessary in the Ray project.
  */
+
 #define RECURSION_LIMIT 2
+
+struct KdtreeNode
+{
+    bool isleaf;
+    
+    // Primitives at this node
+    std::vector<primitiveNmatrix> m_tbd;
+    
+    // Transformation at this node
+    Vector2 xRange, yRange, zRange;
+    
+    // Children of this node
+    KdtreeNode* leftChild;
+    KdtreeNode* rightChild;
+};
 
 class RayScene : public Scene
 {
@@ -38,12 +54,14 @@ protected:
     Vector3 diffuseShade(Vector3 lightray, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo);
     Vector3 specularShade(Vector3 lightray, Vector3 n, Vector3 viewray, CS123SceneMaterial matrl);
     CS123SceneColor textureShade(CS123SceneMaterial matrl, Vector2 textureCo, CS123SceneColor tcolor);
+    void calculateAABB(Vector4 v, primitiveNmatrix& pnm);
+
 
 private:
     Vector4 p, d; // eye and direction in object space
     Vector4 pw, dw; // eye and direction in world space
     std::map<std::string, QImage> texImgPair;
-    Vector2 xRange, yRange, zRange;
+    KdtreeNode *m_root;
 };
 
 #endif // RAYSCENE_H

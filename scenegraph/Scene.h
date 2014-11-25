@@ -24,6 +24,8 @@ struct primitiveNmatrix
 
     GLuint m_vaoID; // The vertex array object ID, which is passed to glBindVertexArray.
     int verticesNumber;
+    
+    Vector2 xRange, yRange, zRange;
 };
 
 class Scene

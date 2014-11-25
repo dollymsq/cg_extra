@@ -286,7 +286,6 @@ CS123SceneColor RayScene::textureShade(CS123SceneMaterial matrl, Vector2 texture
 
         QRgb texcolor = tp.pixel(idxs, idxt);
 
-//        std::cout<< matrl.blend;
         mcl.b = (1-matrl.blend)*tcolor.b + matrl.blend * float(qBlue(texcolor))/255.0f;
         mcl.g = (1-matrl.blend)*tcolor.g + matrl.blend * float(qGreen(texcolor))/255.0f;
         mcl.r = (1-matrl.blend)*tcolor.r + matrl.blend * float(qRed(texcolor))/255.0f;
@@ -318,3 +317,45 @@ void RayScene::setTextureImage()
         }
     }
 }
+
+ void RayScene::builKdtree()
+ {
+     //root AABB range
+     m_root = new KdtreeNode();
+     std::vector<primitiveNmatrix>::iterator it;
+     for(it = m_tbd.begin(); it != m_tbd.end(); it++)
+     {
+         primitiveNmatrix pnm = (*it);
+         
+         pnm.xRange.x = MAX_LIMIT;
+         pnm.xRange.y = - MAX_LIMIT;
+         pnm.yRange.x = MAX_LIMIT;
+         pnm.yRange.y = - MAX_LIMIT;
+         pnm.zRange.x = MAX_LIMIT;
+         pnm.zRange.y = - MAX_LIMIT;
+         
+         Vector4 v1(-0.5, -0.5, -0.5, 1);
+         Vector4 v2( 0.5, -0.5, -0.5, 1);
+         Vector4 v3(-0.5,  0.5, -0.5, 1);
+         Vector4 v4( 0.5,  0.5, -0.5, 1);
+         Vector4 v5(-0.5, -0.5,  0.5, 1);
+         Vector4 v6( 0.5, -0.5,  0.5, 1);
+         Vector4 v7(-0.5,  0.5,  0.5, 1);
+         Vector4 v8( 0.5,  0.5,  0.5, 1);
+         
+         v1 = pnm.comMatrix * v1;
+         v2 = pnm.comMatrix * v2;
+         v3 = pnm.comMatrix * v3;
+         v4 = pnm.comMatrix * v4;
+         v5 = pnm.comMatrix * v5;
+         v6 = pnm.comMatrix * v6;
+         v7 = pnm.comMatrix * v7;
+         v8 = pnm.comMatrix * v8;
+
+     }
+ }
+
+ void RayScene::calculateAABB(Vector4 v, primitiveNmatrix& pnm)
+ {
+     if(v.x > pnm.)
+ }
