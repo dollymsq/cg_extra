@@ -352,10 +352,43 @@ void RayScene::setTextureImage()
          v7 = pnm.comMatrix * v7;
          v8 = pnm.comMatrix * v8;
 
+         calculateAABB(v1, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v2, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v3, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v4, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v5, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v6, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v7, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v8, pnm.xRange, pnm.yRange, pnm.zRange);
+
+         //for the root node
+         calculateAABB(v1, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v2, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v3, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v4, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v5, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v6, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v7, m_root->xRange, m_root->yRange, m_root->zRange);
+         calculateAABB(v8, m_root->xRange, m_root->yRange, m_root->zRange);
      }
+
+
  }
 
- void RayScene::calculateAABB(Vector4 v, primitiveNmatrix& pnm)
+ void RayScene::calculateAABB(Vector4 v, Vector2& xRange, Vector2& yRange, Vector2& zRange)
  {
-     if(v.x > pnm.)
+     if(v.x > pnm.xRange.y)
+         xRange.y = v.x;
+     if(v.x < pnm.xRange.x)
+         xRange.x = v.x;
+
+     if(v.y > pnm.yRange.y)
+         yRange.y = v.y;
+     if(v.y < pnm.yRange.x)
+         yRange.x = v.y;
+
+     if(v.z > pnm.zRange.y)
+         zRange.y = v.z;
+     if(v.z < pnm.zRange.x)
+         zRange.x = v.z;
  }

@@ -54,7 +54,7 @@ protected:
     Vector3 diffuseShade(Vector3 lightray, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo);
     Vector3 specularShade(Vector3 lightray, Vector3 n, Vector3 viewray, CS123SceneMaterial matrl);
     CS123SceneColor textureShade(CS123SceneMaterial matrl, Vector2 textureCo, CS123SceneColor tcolor);
-    void calculateAABB(Vector4 v, primitiveNmatrix& pnm);
+    void calculateAABB(Vector4 v, Vector2& xRange, Vector2& yRange, Vector2& zRange);
 
 
 private:
