@@ -23,7 +23,7 @@ struct KdtreeNode
     bool isleaf;
     
     // Primitives at this node
-    std::vector<primitiveNmatrix> m_tbd;
+    std::vector<primitiveNmatrix*> m_tbd;
     
     // Transformation at this node
     Vector2 xRange, yRange, zRange;
@@ -62,6 +62,12 @@ private:
     Vector4 pw, dw; // eye and direction in world space
     std::map<std::string, QImage> texImgPair;
     KdtreeNode *m_root;
+    void splitNode(KdtreeNode* node);
+    void countChild(char axis, int threshold, KdtreeNode *node, int& left, int & right);
+    void addPrimitive2Node(char axis, int threshold, KdtreeNode *node, KdtreeNode *left, KdtreeNode *right);
+//    int xsort_helper(const void* a, const void* b);
+//    int ysort_helper(const void* a, const void* b);
+//    int zsort_helper(const void* a, const void* b);
 };
 
 #endif // RAYSCENE_H

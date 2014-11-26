@@ -320,19 +320,27 @@ void RayScene::setTextureImage()
 
  void RayScene::builKdtree()
  {
-     //root AABB range
+     //find each primitive's bounding box
      m_root = new KdtreeNode();
      std::vector<primitiveNmatrix>::iterator it;
      for(it = m_tbd.begin(); it != m_tbd.end(); it++)
      {
-         primitiveNmatrix pnm = (*it);
-         
-         pnm.xRange.x = MAX_LIMIT;
-         pnm.xRange.y = - MAX_LIMIT;
-         pnm.yRange.x = MAX_LIMIT;
-         pnm.yRange.y = - MAX_LIMIT;
-         pnm.zRange.x = MAX_LIMIT;
-         pnm.zRange.y = - MAX_LIMIT;
+         primitiveNmatrix *pnm = &(*it);
+         m_root->m_tbd.push_back(pnm);
+
+         pnm->xRange.x = MAX_LIMIT;
+         pnm->xRange.y = - MAX_LIMIT;
+         pnm->yRange.x = MAX_LIMIT;
+         pnm->yRange.y = - MAX_LIMIT;
+         pnm->zRange.x = MAX_LIMIT;
+         pnm->zRange.y = - MAX_LIMIT;
+
+         m_root->xRange.x = MAX_LIMIT;
+         m_root->xRange.y = - MAX_LIMIT;
+         m_root->yRange.x = MAX_LIMIT;
+         m_root->yRange.y = - MAX_LIMIT;
+         m_root->zRange.x = MAX_LIMIT;
+         m_root->zRange.y = - MAX_LIMIT;
          
          Vector4 v1(-0.5, -0.5, -0.5, 1);
          Vector4 v2( 0.5, -0.5, -0.5, 1);
@@ -343,52 +351,269 @@ void RayScene::setTextureImage()
          Vector4 v7(-0.5,  0.5,  0.5, 1);
          Vector4 v8( 0.5,  0.5,  0.5, 1);
          
-         v1 = pnm.comMatrix * v1;
-         v2 = pnm.comMatrix * v2;
-         v3 = pnm.comMatrix * v3;
-         v4 = pnm.comMatrix * v4;
-         v5 = pnm.comMatrix * v5;
-         v6 = pnm.comMatrix * v6;
-         v7 = pnm.comMatrix * v7;
-         v8 = pnm.comMatrix * v8;
+         v1 = pnm->comMatrix * v1;
+         v2 = pnm->comMatrix * v2;
+         v3 = pnm->comMatrix * v3;
+         v4 = pnm->comMatrix * v4;
+         v5 = pnm->comMatrix * v5;
+         v6 = pnm->comMatrix * v6;
+         v7 = pnm->comMatrix * v7;
+         v8 = pnm->comMatrix * v8;
 
-         calculateAABB(v1, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v2, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v3, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v4, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v5, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v6, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v7, pnm.xRange, pnm.yRange, pnm.zRange);
-         calculateAABB(v8, pnm.xRange, pnm.yRange, pnm.zRange);
+         calculateAABB(v1, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v2, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v3, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v4, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v5, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v6, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v7, pnm->xRange, pnm->yRange, pnm->zRange);
+         calculateAABB(v8, pnm->xRange, pnm->yRange, pnm->zRange);
 
          //for the root node
-         calculateAABB(v1, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v2, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v3, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v4, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v5, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v6, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v7, m_root->xRange, m_root->yRange, m_root->zRange);
-         calculateAABB(v8, m_root->xRange, m_root->yRange, m_root->zRange);
+         if(m_root->xRange.x > pnm->xRange.x)
+             m_root->xRange.x = pnm->xRange.x;
+         if(m_root->xRange.y < pnm->xRange.y)
+             m_root->xRange.y = pnm->xRange.y;
+
+         if(m_root->yRange.x > pnm->yRange.x)
+             m_root->yRange.x = pnm->yRange.x;
+         if(m_root->yRange.y < pnm->yRange.y)
+             m_root->yRange.y = pnm->yRange.y;
+
+         if(m_root->zRange.x > pnm->zRange.x)
+             m_root->zRange.x = pnm->zRange.x;
+         if(m_root->zRange.y < pnm->zRange.y)
+             m_root->zRange.y = pnm->zRange.y;
+
      }
 
-
+     m_root->isleaf = 0;
+     splitNode(m_root);
  }
 
  void RayScene::calculateAABB(Vector4 v, Vector2& xRange, Vector2& yRange, Vector2& zRange)
  {
-     if(v.x > pnm.xRange.y)
+     if(v.x > xRange.y)
          xRange.y = v.x;
-     if(v.x < pnm.xRange.x)
+     if(v.x < xRange.x)
          xRange.x = v.x;
 
-     if(v.y > pnm.yRange.y)
+     if(v.y > yRange.y)
          yRange.y = v.y;
-     if(v.y < pnm.yRange.x)
+     if(v.y < yRange.x)
          yRange.x = v.y;
 
-     if(v.z > pnm.zRange.y)
+     if(v.z > zRange.y)
          zRange.y = v.z;
-     if(v.z < pnm.zRange.x)
+     if(v.z < zRange.x)
          zRange.x = v.z;
  }
+
+ void RayScene::splitNode(KdtreeNode* node)
+ {
+     if(node->isleaf)
+         return;
+
+     char splitAxis = 'y';
+     int tmp;
+     int xr = node->xRange.y - node->xRange.x;
+     int yr = node->yRange.y - node->yRange.x;
+     int zr = node->zRange.y - node->zRange.x;
+     if( xr > yr)
+     {
+         splitAxis = 'x';
+         tmp = xr;
+     }
+     if( zr > tmp)
+     {
+         splitAxis = 'z';
+     }
+
+     std::vector<primitiveNmatrix*>::iterator it;
+     int countl, countr, thresholdt, costSum = MAX_LIMIT, costt, threshold;
+     switch(splitAxis)
+     {
+     case 'x':
+         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         {
+             primitiveNmatrix* pnm = (*it);
+             thresholdt = pnm->xRange.y;
+             countChild('x',thresholdt, node,countl,countr);
+             costt = countl * (yr*zr + zr* (node->xRange.y - thresholdt) + yr* (node->xRange.y - thresholdt))
+                     + countr * (yr*zr + zr* (thresholdt - node->xRange.x) + yr* (thresholdt - node->xRange.x));
+             if(costSum > costt)
+             {
+                 threshold = thresholdt;
+                 costSum = costt;
+             }
+         }
+         break;
+     case 'y':
+         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         {
+             primitiveNmatrix* pnm = (*it);
+             thresholdt = pnm->yRange.y;
+             countChild('y',thresholdt, node,countl,countr);
+             costt = countl * (xr*zr + zr* (node->yRange.y - thresholdt) + xr* (node->yRange.y - thresholdt))
+                     + countr * (xr*zr + zr* (thresholdt - node->yRange.x) + xr* (thresholdt - node->yRange.x));
+             if(costSum > costt)
+             {
+                 threshold = thresholdt;
+                 costSum = costt;
+             }
+         }
+         break;
+     case 'z':
+         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         {
+             primitiveNmatrix* pnm = (*it);
+             thresholdt = pnm->zRange.y;
+             countChild('z',thresholdt, node,countl,countr);
+             costt = countl * (xr*yr + yr* (node->zRange.y - thresholdt) + xr* (node->zRange.y - thresholdt))
+                     + countr * (xr*yr + yr* (thresholdt - node->zRange.x) + xr* (thresholdt - node->zRange.x));
+             if(costSum > costt)
+             {
+                 threshold = thresholdt;
+                 costSum = costt;
+             }
+         }
+         break;
+     default:
+         break;
+     }
+     node->leftChild = new KdtreeNode();
+     node->rightChild = new KdtreeNode();
+
+     addPrimitive2Node(splitAxis, threshold, node, node->leftChild, node->rightChild);
+
+     splitNode(node->leftChild);
+     splitNode(node->rightChild);
+ }
+
+ void RayScene::countChild(char axis, int threshold, KdtreeNode *node, int& left, int & right)
+ {
+     std::vector<primitiveNmatrix*>::iterator it;
+     left = 0;
+     right = 0;
+     for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+     {
+         primitiveNmatrix* pnm = (*it);
+         switch(axis)
+         {
+         case 'x':
+             if(pnm->xRange.x < threshold)
+                 left ++;
+             if(pnm->xRange.y > threshold)
+                 right ++;
+             break;
+         case 'y':
+             if(pnm->yRange.x < threshold)
+                 left ++;
+             if(pnm->yRange.y > threshold)
+                 right ++;
+             break;
+         case 'z':
+             if(pnm->zRange.x < threshold)
+                 left ++;
+             if(pnm->zRange.y > threshold)
+                 right ++;
+             break;
+         default:
+             break;
+         }
+     }
+ }
+
+ void RayScene::addPrimitive2Node(char axis, int threshold, KdtreeNode *node, KdtreeNode *left, KdtreeNode *right)
+ {
+     std::vector<primitiveNmatrix*>::iterator it;
+
+     switch(axis)
+     {
+     case 'x':
+         left->xRange.x = node->xRange.x;
+         left->xRange.y = threshold;
+
+         right->xRange.x = threshold;
+         right->xRange.y = node->xRange.y;
+         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         {
+             primitiveNmatrix* pnm = (*it);
+             if(pnm->xRange.x < threshold)
+                 left->m_tbd.push_back(pnm);
+             if(pnm->xRange.y > threshold)
+                 right->m_tbd.push_back(pnm);
+         }
+         break;
+     case 'y':
+         left->yRange.x = node->yRange.x;
+         left->yRange.y = threshold;
+
+         right->yRange.x = threshold;
+         right->yRange.y = node->yRange.y;
+         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         {
+             primitiveNmatrix* pnm = (*it);
+
+             if(pnm->yRange.x < threshold)
+                 left->m_tbd.push_back(pnm);
+             if(pnm->yRange.y > threshold)
+                 right->m_tbd.push_back(pnm);
+         }
+         break;
+     case 'z':
+         left->zRange.x = node->zRange.x;
+         left->zRange.y = threshold;
+
+         right->zRange.x = threshold;
+         right->zRange.y = node->zRange.y;
+         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         {
+             primitiveNmatrix* pnm = (*it);
+             if(pnm->zRange.x < threshold)
+                 left->m_tbd.push_back(pnm);
+             if(pnm->zRange.y > threshold)
+                 right->m_tbd.push_back(pnm);
+         }
+         break;
+     default:
+         break;
+     }
+
+     if(left->m_tbd.size() < 5)
+         left->isleaf = true;
+     else
+         left->isleaf = false;
+
+     if(left->m_tbd.size() < 5)
+         right->isleaf = true;
+     else
+         right->isleaf = false;
+ }
+
+// int RayScene::xsort_helper(const void* a, const void* b)
+// {
+//     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);
+//     primitiveNmatrix* arg2 = *reinterpret_cast<const primitiveNmatrix*>(b);
+//     if(arg1->xRange.x < arg2->xRange.x) return -1;
+//     if(arg1->xRange.x > arg2->xRange.x) return 1;
+//     return 0;
+// }
+
+// int RayScene::ysort_helper(const void* a, const void* b)
+// {
+//     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);
+//     primitiveNmatrix* arg2 = *reinterpret_cast<const primitiveNmatrix*>(b);
+//     if(arg1->yRange.x < arg2->yRange.x) return -1;
+//     if(arg1->yRange.x > arg2->yRange.x) return 1;
+//     return 0;
+// }
+
+// int RayScene::zsort_helper(const void* a, const void* b)
+// {
+//     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);
+//     primitiveNmatrix* arg2 = *reinterpret_cast<const primitiveNmatrix*>(b);
+//     if(arg1->zRange.x < arg2->zRange.x) return -1;
+//     if(arg1->zRange.x > arg2->zRange.x) return 1;
+//     return 0;
+// }
