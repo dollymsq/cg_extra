@@ -271,7 +271,8 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
         if(settings.useTextureMapping)
             m_scene->setTextureImage();
 
-        std::cout<< "Building kdtree"<<endl;
+        m_scene->builKdtree();
+        std::cout<< "kdtree built"<<endl;
 
         for(int i = 0; i< height; i++)
         {
@@ -288,6 +289,7 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                 if(i == 297 && j == 484)
                 {
                     tp = filmP;
+//                    return;
                 }
 //                std::cout<<"Image pos"<< j<<", "<<i<<"========================="<<endl;
 

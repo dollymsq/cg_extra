@@ -9,6 +9,7 @@ RayScene::RayScene()
 
 RayScene::~RayScene()
 {
+    clear(m_root);
 }
 
 Vector4 RayScene::generateRay(Vector4 eye, Vector4 filmP, glm::mat4 M)
@@ -42,7 +43,10 @@ CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth,
 //    std::cout<<recursiondepth<<"---------------------"<<endl;
 //    std::cout<<intersectId<<endl;
 
-    REAL t = calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
+    REAL t = MAX_LIMIT;
+
+    traverseTree(m_root,t, eye,dir,tnormal,tmaterial,tex, intersectId);
+//    calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
 
 //    std::cout<<intersectId<<endl;
 //    std::cout<<t<<endl;
@@ -167,35 +171,37 @@ bool RayScene::isInShadow(Vector3 object, Vector3 raydir, REAL tmin, int interse
     Vector3 tnormal(0, 0, 0); // normal at point t
     CS123SceneMaterial tmaterial;
     Vector2 tex(0,0);
-    REAL t = calculateIntersection(objectv4,shadowray,tnormal,tmaterial,tex, intersectId);
+    REAL t = MAX_LIMIT;
+//    calculateIntersection(t, objectv4,shadowray,tnormal,tmaterial,tex, intersectId);
+    traverseTree(m_root, t, objectv4, shadowray,tnormal,tmaterial,tex, intersectId);
     if( t < tmin)
         return true;
     else
         return false;
 }
 
-REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
+void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatrix*> node_tbd, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
 {
     Shape* m_vshape = NULL;
     glm::mat4 Mw2o;
-    std::vector<primitiveNmatrix>::iterator it;
+    std::vector<primitiveNmatrix*>::iterator it;
     Vector3 tnormal(0,0,0);
-    REAL tpostmin = MAX_LIMIT;
+//    REAL tpostmin = MAX_LIMIT;
     int tpId = -1;
     REAL t = MAX_LIMIT; // to compare
     textureCo = Vector2(0,0);
 
-    for(it = m_tbd.begin(); it != m_tbd.end(); it++)
+    for(it = node_tbd.begin(); it != node_tbd.end(); it++)
     {
-        if((*it).shapetype!= PRIMITIVE_CUBE &&(*it).shapetype!= PRIMITIVE_CONE &&(*it).shapetype!= PRIMITIVE_CYLINDER && (*it).shapetype!= PRIMITIVE_SPHERE)
+        if((*it)->shapetype!= PRIMITIVE_CUBE &&(*it)->shapetype!= PRIMITIVE_CONE &&(*it)->shapetype!= PRIMITIVE_CYLINDER && (*it)->shapetype!= PRIMITIVE_SPHERE)
             continue;
-        if((*it).id == intersectId)
+        if((*it)->id == intersectId)
             continue;
-        Mw2o = glm::inverse((*it).comMatrix);
+        Mw2o = glm::inverse((*it)->comMatrix);
         p = Mw2o*start;
         d = Mw2o*dir;
 
-        switch((*it).shapetype)
+        switch((*it)->shapetype)
         {
         case PRIMITIVE_CUBE:
             m_vshape = new Cube(p,d);
@@ -223,13 +229,13 @@ REAL RayScene::calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal
         if(t>1E-6 && t < tpostmin)
         {
             tpostmin = t;
-            normal = transNormalo2w(tnormal,glm::inverse((*it).comMatrix));
-            tmaterial = (*it).material;
-            tpId = (*it).id;
+            normal = transNormalo2w(tnormal,glm::inverse((*it)->comMatrix));
+            tmaterial = (*it)->material;
+            tpId = (*it)->id;
         }
     }
     intersectId = tpId;
-    return tpostmin;
+//    return tpostmin;
 }
 
 Vector3 RayScene::diffuseShade(Vector3 lightray, Vector3 n, CS123SceneMaterial matrl, Vector2 textureCo)
@@ -322,6 +328,12 @@ void RayScene::setTextureImage()
  {
      //find each primitive's bounding box
      m_root = new KdtreeNode();
+     m_root->xRange.x = MAX_LIMIT;
+     m_root->xRange.y = - MAX_LIMIT;
+     m_root->yRange.x = MAX_LIMIT;
+     m_root->yRange.y = - MAX_LIMIT;
+     m_root->zRange.x = MAX_LIMIT;
+     m_root->zRange.y = - MAX_LIMIT;
      std::vector<primitiveNmatrix>::iterator it;
      for(it = m_tbd.begin(); it != m_tbd.end(); it++)
      {
@@ -334,13 +346,6 @@ void RayScene::setTextureImage()
          pnm->yRange.y = - MAX_LIMIT;
          pnm->zRange.x = MAX_LIMIT;
          pnm->zRange.y = - MAX_LIMIT;
-
-         m_root->xRange.x = MAX_LIMIT;
-         m_root->xRange.y = - MAX_LIMIT;
-         m_root->yRange.x = MAX_LIMIT;
-         m_root->yRange.y = - MAX_LIMIT;
-         m_root->zRange.x = MAX_LIMIT;
-         m_root->zRange.y = - MAX_LIMIT;
          
          Vector4 v1(-0.5, -0.5, -0.5, 1);
          Vector4 v2( 0.5, -0.5, -0.5, 1);
@@ -387,8 +392,8 @@ void RayScene::setTextureImage()
 
      }
 
-     m_root->isleaf = 0;
-     splitNode(m_root);
+     m_root->isLeaf = 0;
+     m_root->splitNode();
  }
 
  void RayScene::calculateAABB(Vector4 v, Vector2& xRange, Vector2& yRange, Vector2& zRange)
@@ -409,16 +414,80 @@ void RayScene::setTextureImage()
          zRange.x = v.z;
  }
 
- void RayScene::splitNode(KdtreeNode* node)
+ void RayScene::traverseTree(KdtreeNode* node, REAL &t, const Vector4 &p, const Vector4 &d, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
  {
-     if(node->isleaf)
+     if(node->isLeaf && node->m_tbd.size() > 0)
+     {
+         calculateIntersection(t, node->m_tbd, p,d,normal,tmaterial,textureCo, intersectId);
+         return ;
+     }
+     Vector3 n1 = Vector3(0, 1, 0);
+     Vector3 n2 = Vector3(1, 0, 0);
+     Vector3 n3 = Vector3(0, 0, 1);
+
+     Vector3 p1 = Vector3(node->xRange.y, node->yRange.y, node->zRange.y);
+     Vector3 p2 = Vector3(node->xRange.x, node->yRange.x, node->zRange.x);
+
+     int tmpt;
+     tmpt = node->calculatePlaneHit(n1, p1, p, d);
+     if(node->isInBoundingBox(tmpt, p, d,'y'))
+     {
+         traverseTree(node->leftChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         traverseTree(node->rightChild,t, p, d,normal,tmaterial,textureCo, intersectId);
+         return;
+     }
+
+     tmpt = node->calculatePlaneHit(n1, p2, p, d);
+     if(node->isInBoundingBox(tmpt, p, d,'y'))
+     {
+         traverseTree(node->leftChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         traverseTree(node->rightChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         return;
+     }
+
+     tmpt = node->calculatePlaneHit(n2, p1, p, d);
+     if(node->isInBoundingBox(tmpt, p, d,'x'))
+     {
+         traverseTree(node->leftChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         traverseTree(node->rightChild,t, p, d,normal,tmaterial,textureCo, intersectId);
+         return;
+     }
+
+     tmpt = node->calculatePlaneHit(n2, p2, p, d);
+     if(node->isInBoundingBox(tmpt, p, d,'x'))
+     {
+         traverseTree(node->leftChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         traverseTree(node->rightChild,t, p, d,normal,tmaterial,textureCo, intersectId);
+         return;
+     }
+
+     tmpt = node->calculatePlaneHit(n3, p1, p, d);
+     if(node->isInBoundingBox(tmpt, p, d,'z'))
+     {
+         traverseTree(node->leftChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         traverseTree(node->rightChild,t, p, d,normal,tmaterial,textureCo, intersectId);
+         return;
+     }
+
+     tmpt = node->calculatePlaneHit(n3, p2, p, d);
+     if(node->isInBoundingBox(tmpt, p, d,'z'))
+     {
+         traverseTree(node->leftChild, t, p, d,normal,tmaterial,textureCo, intersectId);
+         traverseTree(node->rightChild,t, p, d,normal,tmaterial,textureCo, intersectId);
+         return;
+     }
+ }
+
+ void KdtreeNode::splitNode()
+ {
+     if(isLeaf)
          return;
 
      char splitAxis = 'y';
      int tmp;
-     int xr = node->xRange.y - node->xRange.x;
-     int yr = node->yRange.y - node->yRange.x;
-     int zr = node->zRange.y - node->zRange.x;
+     REAL xr = xRange.y - xRange.x;
+     REAL yr = yRange.y - yRange.x;
+     REAL zr = zRange.y - zRange.x;
      if( xr > yr)
      {
          splitAxis = 'x';
@@ -430,17 +499,18 @@ void RayScene::setTextureImage()
      }
 
      std::vector<primitiveNmatrix*>::iterator it;
-     int countl, countr, thresholdt, costSum = MAX_LIMIT, costt, threshold;
+     int countl, countr;
+     REAL costSum = INT_MAX, thresholdt, costt, threshold;
      switch(splitAxis)
      {
      case 'x':
-         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         for(it = m_tbd.begin(); it != m_tbd.end(); it++)
          {
              primitiveNmatrix* pnm = (*it);
              thresholdt = pnm->xRange.y;
-             countChild('x',thresholdt, node,countl,countr);
-             costt = countl * (yr*zr + zr* (node->xRange.y - thresholdt) + yr* (node->xRange.y - thresholdt))
-                     + countr * (yr*zr + zr* (thresholdt - node->xRange.x) + yr* (thresholdt - node->xRange.x));
+             countChild('x',thresholdt,countl,countr);
+             costt = countr * (yr*zr + zr* (xRange.y - thresholdt) + yr* (xRange.y - thresholdt))
+                     + countl * (yr*zr + zr* (thresholdt - xRange.x) + yr* (thresholdt - xRange.x));
              if(costSum > costt)
              {
                  threshold = thresholdt;
@@ -449,13 +519,13 @@ void RayScene::setTextureImage()
          }
          break;
      case 'y':
-         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         for(it = m_tbd.begin(); it != m_tbd.end(); it++)
          {
              primitiveNmatrix* pnm = (*it);
              thresholdt = pnm->yRange.y;
-             countChild('y',thresholdt, node,countl,countr);
-             costt = countl * (xr*zr + zr* (node->yRange.y - thresholdt) + xr* (node->yRange.y - thresholdt))
-                     + countr * (xr*zr + zr* (thresholdt - node->yRange.x) + xr* (thresholdt - node->yRange.x));
+             countChild('y',thresholdt,countl,countr);
+             costt = countr * (xr*zr + zr* (yRange.y - thresholdt) + xr* (yRange.y - thresholdt))
+                     + countl * (xr*zr + zr* (thresholdt - yRange.x) + xr* (thresholdt - yRange.x));
              if(costSum > costt)
              {
                  threshold = thresholdt;
@@ -464,13 +534,13 @@ void RayScene::setTextureImage()
          }
          break;
      case 'z':
-         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         for(it = m_tbd.begin(); it != m_tbd.end(); it++)
          {
              primitiveNmatrix* pnm = (*it);
              thresholdt = pnm->zRange.y;
-             countChild('z',thresholdt, node,countl,countr);
-             costt = countl * (xr*yr + yr* (node->zRange.y - thresholdt) + xr* (node->zRange.y - thresholdt))
-                     + countr * (xr*yr + yr* (thresholdt - node->zRange.x) + xr* (thresholdt - node->zRange.x));
+             countChild('z',thresholdt,countl,countr);
+             costt = countr * (xr*yr + yr* (zRange.y - thresholdt) + xr* (zRange.y - thresholdt))
+                     + countl * (xr*yr + yr* (thresholdt - zRange.x) + xr* (thresholdt - zRange.x));
              if(costSum > costt)
              {
                  threshold = thresholdt;
@@ -481,21 +551,21 @@ void RayScene::setTextureImage()
      default:
          break;
      }
-     node->leftChild = new KdtreeNode();
-     node->rightChild = new KdtreeNode();
+     leftChild = new KdtreeNode();
+     rightChild = new KdtreeNode();
 
-     addPrimitive2Node(splitAxis, threshold, node, node->leftChild, node->rightChild);
+     addPrimitive2Node(splitAxis, threshold, leftChild, rightChild);
 
-     splitNode(node->leftChild);
-     splitNode(node->rightChild);
+     leftChild->splitNode();
+     rightChild->splitNode();
  }
 
- void RayScene::countChild(char axis, int threshold, KdtreeNode *node, int& left, int & right)
+ void KdtreeNode::countChild(char axis, REAL threshold, int& left, int & right)
  {
      std::vector<primitiveNmatrix*>::iterator it;
      left = 0;
      right = 0;
-     for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+     for(it = m_tbd.begin(); it != m_tbd.end(); it++)
      {
          primitiveNmatrix* pnm = (*it);
          switch(axis)
@@ -524,19 +594,25 @@ void RayScene::setTextureImage()
      }
  }
 
- void RayScene::addPrimitive2Node(char axis, int threshold, KdtreeNode *node, KdtreeNode *left, KdtreeNode *right)
+ void KdtreeNode::addPrimitive2Node(char axis, REAL threshold, KdtreeNode *left, KdtreeNode *right)
  {
      std::vector<primitiveNmatrix*>::iterator it;
 
      switch(axis)
      {
      case 'x':
-         left->xRange.x = node->xRange.x;
+         left->yRange = yRange;
+         left->zRange = zRange;
+
+         right->yRange = yRange;
+         right->zRange = zRange;
+
+         left->xRange.x = xRange.x;
          left->xRange.y = threshold;
 
          right->xRange.x = threshold;
-         right->xRange.y = node->xRange.y;
-         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         right->xRange.y = xRange.y;
+         for(it = m_tbd.begin(); it != m_tbd.end(); it++)
          {
              primitiveNmatrix* pnm = (*it);
              if(pnm->xRange.x < threshold)
@@ -546,12 +622,18 @@ void RayScene::setTextureImage()
          }
          break;
      case 'y':
-         left->yRange.x = node->yRange.x;
+         left->xRange = xRange;
+         left->zRange = zRange;
+
+         right->xRange = xRange;
+         right->zRange = zRange;
+
+         left->yRange.x = yRange.x;
          left->yRange.y = threshold;
 
          right->yRange.x = threshold;
-         right->yRange.y = node->yRange.y;
-         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         right->yRange.y = yRange.y;
+         for(it = m_tbd.begin(); it != m_tbd.end(); it++)
          {
              primitiveNmatrix* pnm = (*it);
 
@@ -562,12 +644,18 @@ void RayScene::setTextureImage()
          }
          break;
      case 'z':
-         left->zRange.x = node->zRange.x;
+         left->xRange = xRange;
+         left->yRange = yRange;
+
+         right->xRange = xRange;
+         right->yRange = yRange;
+
+         left->zRange.x = zRange.x;
          left->zRange.y = threshold;
 
          right->zRange.x = threshold;
-         right->zRange.y = node->zRange.y;
-         for(it = node->m_tbd.begin(); it != node->m_tbd.end(); it++)
+         right->zRange.y = zRange.y;
+         for(it = m_tbd.begin(); it != m_tbd.end(); it++)
          {
              primitiveNmatrix* pnm = (*it);
              if(pnm->zRange.x < threshold)
@@ -581,16 +669,65 @@ void RayScene::setTextureImage()
      }
 
      if(left->m_tbd.size() < 5)
-         left->isleaf = true;
+         left->isLeaf = true;
      else
-         left->isleaf = false;
+         left->isLeaf = false;
 
-     if(left->m_tbd.size() < 5)
-         right->isleaf = true;
+     if(right->m_tbd.size() < 5)
+         right->isLeaf = true;
      else
-         right->isleaf = false;
+         right->isLeaf = false;
  }
 
+
+ REAL KdtreeNode::calculatePlaneHit(const Vector3& n, const Vector3& p0, const Vector4 &p, const Vector4 &d)
+ {
+     return ((n.x*p0.x + n.y*p0.y+n.z*p0.z) - (n.x*p.x + n.y*p.y + n.z*p.z))/(n.x*d.x + n.y*d.y + n.z*d.z);
+ }
+
+ bool KdtreeNode::isInBoundingBox(const REAL& tmpt, const Vector4 &p, const Vector4 &d, char signal)
+ {
+     if(tmpt >=0 )
+     {
+         REAL x = p.x + tmpt*d.x;
+         REAL y = p.y + tmpt*d.y;
+         REAL z = p.z + tmpt*d.z;
+         switch(signal)
+         {
+         case 'x':
+             if(y < yRange.x || y > yRange.y || z < zRange.x || z > zRange.y)
+                 return false;
+             else
+                 return true;
+             break;
+         case 'y':
+             if(x < xRange.x || x > xRange.y || z < zRange.x || z > zRange.y)
+                 return false;
+             else
+                 return true;
+             break;
+         case 'z':
+             if(x < xRange.x || x > xRange.y || y < yRange.x || y > yRange.y )
+                 return false;
+             else
+                 return true;
+             break;
+         }
+     }
+     else
+         return false;
+ }
+
+ void RayScene::clear( KdtreeNode * node)
+ {
+     if(node->isLeaf)
+         delete node;
+     else
+     {
+         clear(node->leftChild);
+         clear(node->rightChild);
+     }
+ }
 // int RayScene::xsort_helper(const void* a, const void* b)
 // {
 //     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);

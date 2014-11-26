@@ -10,7 +10,7 @@
 #include <CS123SceneData.h>
 #include <QFile>
 
-#define MAX_LIMIT 1E+37
+#define MAX_LIMIT 1E+36
 
 class Shape
 {

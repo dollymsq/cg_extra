@@ -18,9 +18,12 @@
 
 #define RECURSION_LIMIT 2
 
-struct KdtreeNode
+class KdtreeNode
 {
-    bool isleaf;
+public:
+    KdtreeNode() {}
+    ~KdtreeNode() {}
+    bool isLeaf;
     
     // Primitives at this node
     std::vector<primitiveNmatrix*> m_tbd;
@@ -31,6 +34,15 @@ struct KdtreeNode
     // Children of this node
     KdtreeNode* leftChild;
     KdtreeNode* rightChild;
+
+    void splitNode();
+    void countChild(char axis, REAL threshold, int& left, int & right);
+    void addPrimitive2Node(char axis, REAL threshold, KdtreeNode *left, KdtreeNode *right);
+//    void isHit(REAL &t, const Vector4 &p, const Vector4 &d); //eye and dir
+    REAL calculatePlaneHit(const Vector3& n, const Vector3& p0, const Vector4 &p, const Vector4 &d);
+    bool isInBoundingBox(const REAL& tmpt, const Vector4 &p, const Vector4 &d, char signal);
+
+
 };
 
 class RayScene : public Scene
@@ -40,9 +52,10 @@ public:
     virtual ~RayScene();
     Vector4 generateRay(Vector4 eye, Vector4 filmP, glm::mat4 M);
     void trace(Vector4 eye, Vector4 dir, BGRA &canvascolor);
-    REAL calculateIntersection(Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial &tmaterial, Vector2 &textureCo, int &intersectId);
+    void calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatrix*> node_tbd, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial &tmaterial, Vector2 &textureCo, int &intersectId);
     void setTextureImage();
     void builKdtree();
+    void clear(KdtreeNode *node);
 
 protected:
 
@@ -62,9 +75,9 @@ private:
     Vector4 pw, dw; // eye and direction in world space
     std::map<std::string, QImage> texImgPair;
     KdtreeNode *m_root;
-    void splitNode(KdtreeNode* node);
-    void countChild(char axis, int threshold, KdtreeNode *node, int& left, int & right);
-    void addPrimitive2Node(char axis, int threshold, KdtreeNode *node, KdtreeNode *left, KdtreeNode *right);
+
+    void traverseTree(KdtreeNode* node, REAL &t, const Vector4 &p, const Vector4 &d, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId);
+
 //    int xsort_helper(const void* a, const void* b);
 //    int ysort_helper(const void* a, const void* b);
 //    int zsort_helper(const void* a, const void* b);
