@@ -45,7 +45,7 @@ CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth,
 
     REAL t = MAX_LIMIT;
 
-    traverseTree(m_root,t, eye,dir,tnormal,tmaterial,tex, intersectId);
+    traverseTree(m_root,t, eye,dir,tnormal,tmaterial, tex, intersectId);
 //    calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
 
 //    std::cout<<intersectId<<endl;
@@ -190,7 +190,7 @@ void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatri
 //    REAL tpostmin = MAX_LIMIT;
     int tpId = intersectId;
     REAL t = MAX_LIMIT; // to compare
-    textureCo = Vector2(0,0);
+    Vector2 textureCot = Vector2(0,0);
 
     for(it = node_tbd.begin(); it != node_tbd.end(); it++)
     {
@@ -222,7 +222,7 @@ void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatri
 
         if(m_vshape != NULL)
         {
-            t = m_vshape->calculateIntersecP(tnormal,textureCo);
+            t = m_vshape->calculateIntersecP(tnormal,textureCot);
             delete m_vshape;
             m_vshape = NULL;
         }
@@ -232,6 +232,7 @@ void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatri
             tpostmin = t;
             normal = transNormalo2w(tnormal,glm::inverse((*it)->comMatrix));
             tmaterial = (*it)->material;
+            textureCo = textureCot;
             tpId = (*it)->id;
         }
     }
