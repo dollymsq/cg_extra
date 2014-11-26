@@ -11,6 +11,8 @@ public:
     void doFilter(BGRA* concol);
     void setThreshold(REAL thd);
 
+    void blurEdges(BGRA* cancol);
+
 protected:
     REAL *Gx, *Gy;
     REAL m_threshold;

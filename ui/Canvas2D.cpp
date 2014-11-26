@@ -298,6 +298,16 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                 m_scene->trace(eye,dir,data()[i*width + j]);
             }
         }
+
+        if(settings.useAntiAliasing)
+        {
+            FEdgeDetect* edgeblur = new FEdgeDetect();
+            edgeblur->setRegionParameter(this);//set the region to handle
+            edgeblur->setThreshold(0.5);
+            edgeblur->blurEdges(data());
+
+            delete edgeblur;
+        }
     }
 }
 
