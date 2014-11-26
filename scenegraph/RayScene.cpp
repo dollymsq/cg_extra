@@ -58,7 +58,7 @@ CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth,
     {
         flcolor = illuminatePoint(eye, dir, t, tnormal, tmaterial,tex,intersectId,recursiondepth);
     }
-    flcolor.threshold();
+    flcolor = flcolor.threshold();
     return flcolor;
 }
 
@@ -248,6 +248,7 @@ Vector3 RayScene::diffuseShade(Vector3 lightray, Vector3 n, CS123SceneMaterial m
 
     //diffuse part
     REAL dotproduct = glm::dot(lightray, n);
+
     if(dotproduct > 0)
     {
         CS123SceneColor mixcolor = matrl.cDiffuse;
@@ -269,7 +270,9 @@ Vector3 RayScene::specularShade(Vector3 lightray, Vector3 n, Vector3 viewray, CS
     //specular part
     Vector3 reflectedray = - glm::reflect(lightray, n);
     reflectedray = glm::normalize(reflectedray);
+//    REAL spedotproduct = min(glm::dot(reflectedray, viewray), 0.6f);
     REAL spedotproduct = glm::dot(reflectedray, viewray);
+
     if(spedotproduct > 0)
     {
         CS123SceneColor mixcolor = matrl.cSpecular;
@@ -420,9 +423,10 @@ void RayScene::setTextureImage()
 
  void RayScene::traverseTree(KdtreeNode* node, REAL &t, const Vector4 &p, const Vector4 &d, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
  {
-     if(node->isLeaf && node->m_tbd.size() > 0)
+     if(node->isLeaf)
      {
-         calculateIntersection(t, node->m_tbd, p,d,normal,tmaterial,textureCo, intersectId);
+         if(node->m_tbd.size() > 0)
+             calculateIntersection(t, node->m_tbd, p,d,normal,tmaterial,textureCo, intersectId);
          return ;
      }
      Vector3 n1 = Vector3(0, 1, 0);
@@ -717,6 +721,7 @@ void RayScene::setTextureImage()
                  return true;
              break;
          default:
+             return false;
              break;
          }
      }

@@ -288,7 +288,7 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                 //calculate intersection point if any and its corresponding normal
 //                if(i == 297 && j == 484)
 //                if(i == 214 && j == 123)
-                if(i == 198 && j == 467)
+                if(i == 137 && j == 298)
                 {
                     tp = filmP;
 //                    return;

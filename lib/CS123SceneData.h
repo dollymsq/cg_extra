@@ -52,11 +52,11 @@ struct CS123SceneColor
    // @TODO: [OPTIONAL] You can implement some operators here for color arithmetic.
         CS123SceneColor operator* (const float w) const { return CS123SceneColor(r*w, g*w, b*w, a);}
         CS123SceneColor operator+ (const CS123SceneColor oth) const { return CS123SceneColor(r+oth.r, g+oth.g, b+oth.b, a);}
-        void threshold() const
+        CS123SceneColor threshold()
         {
-            r > 1? 1 : r;
-            g > 1? 1 : g;
-            b > 1? 1 : b;
+            return CS123SceneColor(r > 1? 1 : r,
+                    g > 1? 1 : g,
+                    b > 1? 1 : b, 1);
         }
 
 };
