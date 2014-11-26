@@ -27,6 +27,7 @@ Vector4 RayScene::generateRay(Vector4 eye, Vector4 filmP, glm::mat4 M)
 void RayScene::trace(Vector4 eye, Vector4 dir, BGRA &canvascolor)
 {
     int intersectId = -1;
+    m_intersectId = -1;
 
     CS123SceneColor flcolor= rayTrace(eye, dir, 0, intersectId);
     canvascolor.b = round(255.0 * flcolor.b);
@@ -46,7 +47,6 @@ CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth,
     REAL t = MAX_LIMIT;
 
     traverseTree(m_root,t, eye,dir,tnormal,tmaterial, tex, intersectId);
-//    calculateIntersection(eye,dir,tnormal,tmaterial,tex, intersectId);
 
 //    std::cout<<intersectId<<endl;
 //    std::cout<<t<<endl;
@@ -154,6 +154,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
     {
         Vector3 rflvr= - glm::reflect(viewray, n);
         Vector4 rflvrv4 = glm::normalize(Vector4(rflvr.x, rflvr.y, rflvr.z, 0));
+        m_intersectId = intersectId;
         CS123SceneColor nextPointColor = rayTrace(pos_objv4,rflvrv4,++recursiondepth, intersectId);
 
         tcolor.b += m_sceneglobalData.ks * matrl.cReflective.b * nextPointColor.b;
@@ -173,7 +174,7 @@ bool RayScene::isInShadow(Vector3 object, Vector3 raydir, REAL tmin, int interse
     CS123SceneMaterial tmaterial;
     Vector2 tex(0,0);
     REAL t = MAX_LIMIT;
-//    calculateIntersection(t, objectv4,shadowray,tnormal,tmaterial,tex, intersectId);
+    m_intersectId = intersectId;
     traverseTree(m_root, t, objectv4, shadowray,tnormal,tmaterial,tex, intersectId);
     if( t < tmin)
         return true;
@@ -196,7 +197,7 @@ void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatri
     {
         if((*it)->shapetype!= PRIMITIVE_CUBE &&(*it)->shapetype!= PRIMITIVE_CONE &&(*it)->shapetype!= PRIMITIVE_CYLINDER && (*it)->shapetype!= PRIMITIVE_SPHERE)
             continue;
-        if((*it)->id == intersectId)
+        if((*it)->id == m_intersectId)
             continue;
         Mw2o = glm::inverse((*it)->comMatrix);
         p = Mw2o*start;
