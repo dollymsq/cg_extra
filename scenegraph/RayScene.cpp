@@ -400,7 +400,7 @@ void RayScene::setTextureImage()
      }
 
      m_root->isLeaf = 0;
-     m_root->splitNode();
+     m_root->splitNode(0);
  }
 
  void RayScene::calculateAABB(Vector4 v, Vector2& xRange, Vector2& yRange, Vector2& zRange)
@@ -486,10 +486,13 @@ void RayScene::setTextureImage()
      }
  }
 
- void KdtreeNode::splitNode()
+ void KdtreeNode::splitNode(int depth)
  {
-     if(isLeaf)
+     if(isLeaf || depth > 10)
+     {
+         isLeaf = true;
          return;
+     }
 
      char splitAxis = 'y';
      int tmp;
@@ -564,8 +567,8 @@ void RayScene::setTextureImage()
 
      addPrimitive2Node(splitAxis, threshold, leftChild, rightChild);
 
-     leftChild->splitNode();
-     rightChild->splitNode();
+     leftChild->splitNode(++depth);
+     rightChild->splitNode(depth);
  }
 
  void KdtreeNode::countChild(char axis, REAL threshold, int& left, int & right)
@@ -739,29 +742,4 @@ void RayScene::setTextureImage()
          clear(node->rightChild);
      }
  }
-// int RayScene::xsort_helper(const void* a, const void* b)
-// {
-//     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);
-//     primitiveNmatrix* arg2 = *reinterpret_cast<const primitiveNmatrix*>(b);
-//     if(arg1->xRange.x < arg2->xRange.x) return -1;
-//     if(arg1->xRange.x > arg2->xRange.x) return 1;
-//     return 0;
-// }
 
-// int RayScene::ysort_helper(const void* a, const void* b)
-// {
-//     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);
-//     primitiveNmatrix* arg2 = *reinterpret_cast<const primitiveNmatrix*>(b);
-//     if(arg1->yRange.x < arg2->yRange.x) return -1;
-//     if(arg1->yRange.x > arg2->yRange.x) return 1;
-//     return 0;
-// }
-
-// int RayScene::zsort_helper(const void* a, const void* b)
-// {
-//     primitiveNmatrix* arg1 = *reinterpret_cast<const primitiveNmatrix*>(a);
-//     primitiveNmatrix* arg2 = *reinterpret_cast<const primitiveNmatrix*>(b);
-//     if(arg1->zRange.x < arg2->zRange.x) return -1;
-//     if(arg1->zRange.x > arg2->zRange.x) return 1;
-//     return 0;
-// }

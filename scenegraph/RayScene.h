@@ -35,13 +35,11 @@ public:
     KdtreeNode* leftChild;
     KdtreeNode* rightChild;
 
-    void splitNode();
+    void splitNode(int depth);
     void countChild(char axis, REAL threshold, int& left, int & right);
     void addPrimitive2Node(char axis, REAL threshold, KdtreeNode *left, KdtreeNode *right);
-//    void isHit(REAL &t, const Vector4 &p, const Vector4 &d); //eye and dir
     REAL calculatePlaneHit(const Vector3& n, const Vector3& p0, const Vector4 &p, const Vector4 &d);
     bool isInBoundingBox(const REAL& tmpt, const Vector4 &p, const Vector4 &d, char signal);
-
 
 };
 
@@ -79,9 +77,6 @@ private:
 
     void traverseTree(KdtreeNode* node, REAL &t, const Vector4 &p, const Vector4 &d, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId);
 
-//    int xsort_helper(const void* a, const void* b);
-//    int ysort_helper(const void* a, const void* b);
-//    int zsort_helper(const void* a, const void* b);
 };
 
 #endif // RAYSCENE_H
