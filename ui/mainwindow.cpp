@@ -323,8 +323,8 @@ void MainWindow::fileOpen()
     // the scene doesn't crash. If you can find a better solution
     // feel free to change this.
     activateCanvas3D();
-//    QString file = QFileDialog::getOpenFileName(this, QString(), "/course/cs123/data/");
-    QString file = "/course/cs123/data/scenes/ray/all_cheese.xml";
+    QString file = QFileDialog::getOpenFileName(this, QString(), "/course/cs123/data/");
+//    QString file = "/course/cs123/data/scenes/ray/all_cheese.xml";
 
     if (!file.isNull())
     {

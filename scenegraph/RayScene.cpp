@@ -58,6 +58,7 @@ CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth,
     {
         flcolor = illuminatePoint(eye, dir, t, tnormal, tmaterial,tex,intersectId,recursiondepth);
     }
+    flcolor.threshold();
     return flcolor;
 }
 
@@ -187,7 +188,7 @@ void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatri
     std::vector<primitiveNmatrix*>::iterator it;
     Vector3 tnormal(0,0,0);
 //    REAL tpostmin = MAX_LIMIT;
-    int tpId = -1;
+    int tpId = intersectId;
     REAL t = MAX_LIMIT; // to compare
     textureCo = Vector2(0,0);
 
@@ -235,6 +236,7 @@ void RayScene::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatri
         }
     }
     intersectId = tpId;
+//    m_intersectId = tpId;
 //    return tpostmin;
 }
 
@@ -711,6 +713,8 @@ void RayScene::setTextureImage()
                  return false;
              else
                  return true;
+             break;
+         default:
              break;
          }
      }

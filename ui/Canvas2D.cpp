@@ -286,7 +286,9 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                 Vector4 dir = m_scene->generateRay(eye, filmP, Mc2w);
 
                 //calculate intersection point if any and its corresponding normal
-                if(i == 297 && j == 484)
+//                if(i == 297 && j == 484)
+                if(i == 214 && j == 123)
+
                 {
                     tp = filmP;
 //                    return;

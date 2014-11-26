@@ -75,6 +75,7 @@ private:
     Vector4 pw, dw; // eye and direction in world space
     std::map<std::string, QImage> texImgPair;
     KdtreeNode *m_root;
+    int m_intersectId;
 
     void traverseTree(KdtreeNode* node, REAL &t, const Vector4 &p, const Vector4 &d, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId);
 
