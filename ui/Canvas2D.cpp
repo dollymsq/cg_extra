@@ -275,10 +275,10 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
 
         if(settings.useSuperSampling)
         {
-            Vector4 filmP1(0,0,-1,1);
-            Vector4 filmP2(0,0,-1,1);
-            Vector4 filmP3(0,0,-1,1);
-            Vector4 filmP4(0,0,-1,1);
+//            Vector4 filmP1(0,0,-1,1);
+//            Vector4 filmP2(0,0,-1,1);
+//            Vector4 filmP3(0,0,-1,1);
+//            Vector4 filmP4(0,0,-1,1);
 
             for(int i = 0; i< height; i++)
             {
@@ -289,20 +289,20 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                         tp = filmP;
                         //                    return;
                     }
-                    filmP.x = 2.0*(float)j/(float)width-1.0;
-                    filmP.y = 1.0-2.0*(float)i/(float)height;
+//                    filmP.x = 2.0*(float)j/(float)width-1.0;
+//                    filmP.y = 1.0-2.0*(float)i/(float)height;
 
-                    filmP1.x = 2.0*(float)(j - 0.5)/(float)width-1.0;
-                    filmP1.y = 1.0-2.0*(float)(i - 0.5)/(float)height;
+//                    filmP1.x = 2.0*(float)(j - 0.5)/(float)width-1.0;
+//                    filmP1.y = 1.0-2.0*(float)(i - 0.5)/(float)height;
 
-                    filmP2.x = 2.0*(float)(j - 0.5)/(float)width-1.0;
-                    filmP2.y = 1.0-2.0*(float)(i + 0.5)/(float)height;
+//                    filmP2.x = 2.0*(float)(j - 0.5)/(float)width-1.0;
+//                    filmP2.y = 1.0-2.0*(float)(i + 0.5)/(float)height;
 
-                    filmP3.x = 2.0*(float)(j + 0.5)/(float)width-1.0;
-                    filmP3.y = 1.0-2.0*(float)(i + 0.5)/(float)height;
+//                    filmP3.x = 2.0*(float)(j + 0.5)/(float)width-1.0;
+//                    filmP3.y = 1.0-2.0*(float)(i + 0.5)/(float)height;
 
-                    filmP4.x = 2.0*(float)(j + 0.5)/(float)width-1.0;
-                    filmP4.y = 1.0-2.0*(float)(i - 0.5)/(float)height;
+//                    filmP4.x = 2.0*(float)(j + 0.5)/(float)width-1.0;
+//                    filmP4.y = 1.0-2.0*(float)(i - 0.5)/(float)height;
 
                     CS123SceneColor flcolor= superSample(eye, Mc2w, j-0.5, j+0.5, i-0.5, i+0.5, 0);
                     BGRA canvascolor;
@@ -370,23 +370,20 @@ CS123SceneColor Canvas2D::superSample(const Vector4 &eye, const glm::mat4 &Mc2w,
     Vector4 filmP3(0,0,-1,1);
     Vector4 filmP4(0,0,-1,1);
 
-    filmP.x = (2.0 * (ymin+ymax)/2.0 / width()) - 1.0;
-    filmP.y = 1.0 - (2.0 * (xmin+xmax)/2.0 / height());
+    filmP.x = (2.0 * (xmin+xmax)/2.0 / width()) - 1.0;
+    filmP.y = 1.0 - (2.0 * (ymin+ymax)/2.0 / height());
 
-    filmP.x = (2.0 * (ymin+ymax)/2.0 / width()) - 1.0;
-    filmP.y = 1.0 - (2.0 * (xmin+xmax)/2.0 / height());
+    filmP1.x = (2.0 * xmin/ (double)width())-1.0;
+    filmP1.y = 1.0 - (2.0*ymin/(double)height());
 
-    filmP1.x = (2.0 * ymin/ (double)width())-1.0;
-    filmP1.y = 1.0 - (2.0*xmin/(double)height());
+    filmP2.x = 2.0 * xmax / (double)width() -1.0;
+    filmP2.y = 1.0-2.0*ymin/ (double)height();
 
-    filmP2.x = 2.0 * ymin / (double)width() -1.0;
-    filmP2.y = 1.0-2.0*xmax/ (double)height();
+    filmP3.x = 2.0*xmax/width()-1.0;
+    filmP3.y = 1.0-2.0*ymax/height();
 
-    filmP3.x = 2.0*ymax/width()-1.0;
-    filmP3.y = 1.0-2.0*xmax/height();
-
-    filmP4.x = 2.0*ymax/width()-1.0;
-    filmP4.y = 1.0-2.0*xmin/height();
+    filmP4.x = 2.0*xmin/width()-1.0;
+    filmP4.y = 1.0-2.0*ymax/height();
 
     Vector4 dir1 = m_scene->generateRay(eye, filmP1, Mc2w);
     Vector4 dir2 = m_scene->generateRay(eye, filmP2, Mc2w);
@@ -404,7 +401,7 @@ CS123SceneColor Canvas2D::superSample(const Vector4 &eye, const glm::mat4 &Mc2w,
             && color3.dist(colorct) < 0.2 && color4.dist(colorct) < 0.2)
             || depth > sqrt(settings.numSuperSamples))
     {
-        return (color1 + color2 + color3 + color4)*(1/8) + colorct*(1/2);
+        return (color1 + color2 + color3 + color4)*(1.0/8.0) + colorct*(1.0/2.0);
     }
     else
     {
