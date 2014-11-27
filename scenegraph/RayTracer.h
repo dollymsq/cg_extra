@@ -62,3 +62,8 @@ private:
 };
 
 #endif // RAYTRACER_H
+
+inline float randBtw(float LO, float HI)
+{
+    return LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+}

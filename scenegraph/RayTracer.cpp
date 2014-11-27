@@ -438,8 +438,12 @@ void RayTracer::run()
     {
         for(int i = m_order; i< height; i = i + m_interval)
         {
-            for(int j = m_order; j< width; j++)
+            for(int j = 0; j< width; j++)
             {
+//                if(i == 176 && j == 206)
+//                {
+//                    std::cout<<"Image pos"<< j<<", "<<i<<"========================="<<endl;
+//                }
                 CS123SceneColor flcolor= superSample(eye, Mc2w, j-0.5, j+0.5, i-0.5, i+0.5, 0);
                 BGRA canvascolor;
                 canvascolor.b = round(255.0 * flcolor.b);
@@ -455,7 +459,7 @@ void RayTracer::run()
         Vector4 filmP(0,0,-1,1);
         for(int i = m_order; i< height; i = i + m_interval)
         {
-            for(int j = m_order; j< width; j++)
+            for(int j = 0; j< width; j++)
             {
                 //screen to film done(camera)
                 filmP.x = 2.0*(float)j/(float)width-1.0;
@@ -484,57 +488,43 @@ void RayTracer::run()
 
 CS123SceneColor RayTracer::superSample(const Vector4 &eye, const glm::mat4 &Mc2w, double xmin, double xmax, double ymin, double ymax, int depth)
 {
-    CS123SceneColor color1, color2, color3, color4, colorct;
-
     Vector4 filmP(0,0,-1,1);
-    Vector4 filmP1(0,0,-1,1);
-    Vector4 filmP2(0,0,-1,1);
-    Vector4 filmP3(0,0,-1,1);
-    Vector4 filmP4(0,0,-1,1);
-
     filmP.x = (2.0 * (xmin+xmax)/2.0 / width) - 1.0;
     filmP.y = 1.0 - (2.0 * (ymin+ymax)/2.0 / height);
-
-    filmP1.x = (2.0 * xmin/ (double)width)-1.0;
-    filmP1.y = 1.0 - (2.0*ymin/(double)height);
-
-    filmP2.x = 2.0 * xmax / (double)width -1.0;
-    filmP2.y = 1.0-2.0*ymin/ (double)height;
-
-    filmP3.x = 2.0*xmax/width-1.0;
-    filmP3.y = 1.0-2.0*ymax/height;
-
-    filmP4.x = 2.0*xmin/width-1.0;
-    filmP4.y = 1.0-2.0*ymax/height;
-
-    Vector4 dir1 = generateRay(eye, filmP1, Mc2w);
-    Vector4 dir2 = generateRay(eye, filmP2, Mc2w);
-    Vector4 dir3 = generateRay(eye, filmP3, Mc2w);
-    Vector4 dir4 = generateRay(eye, filmP4, Mc2w);
     Vector4 dir = generateRay(eye, filmP, Mc2w);
+    CS123SceneColor colorct = trace(eye,dir);
 
-    color1 = trace(eye,dir1);
-    color2 = trace(eye,dir2);
-    color3 = trace(eye,dir3);
-    color4 = trace(eye,dir4);
-    colorct = trace(eye,dir);
+//    if(colorct.b > 0 || colorct.g > 0 || colorct.r > 0 )
+//    {
+//        std::cout<<"gotcolor"<<endl;
+//    }
 
-    if((color1.dist(colorct) < 0.2 && color2.dist(colorct)  < 0.2
-            && color3.dist(colorct) < 0.2 && color4.dist(colorct) < 0.2)
-            || depth > sqrt(settings.numSuperSamples))
+    std::vector<CS123SceneColor> colorlist;
+    std::vector<Vector4> filmPlist;
+
+    for( int i = 0; i < settings.numSuperSamples - 1; i ++ )
     {
-        return (color1 + color2 + color3 + color4)*(1.0/8.0) + colorct*(1.0/2.0);
+        Vector4 filmPt(0,0,-1,1);
+        float tmpx = randBtw(xmin, xmax);
+        float tmpy = randBtw(ymin, ymax);
+        filmPt.x = 2.0 * tmpx/ width - 1.0;
+        filmPt.y = 1.0 - 2.0 * tmpy/ height;
+        filmPlist.push_back(filmPt);
+
+        Vector4 tdir = generateRay(eye, filmPt, Mc2w);
+        CS123SceneColor color = trace(eye,tdir);
+        colorlist.push_back(color);
     }
-    else
+
+    CS123SceneColor sum = colorct;
+    for( int i = 0; i < settings.numSuperSamples - 1; i ++ )
     {
-        if((color1.dist(colorct) >= 0.2 ))
-            color1 = superSample(eye, Mc2w, xmin, (xmin + xmax)/2, ymin, (ymin+ymax)/2, depth + 1);
-        if((color2.dist(colorct) >= 0.2 ))
-            color2 = superSample(eye, Mc2w, (xmin + xmax)/2, xmax, ymin, (ymin+ymax)/2, depth + 1);
-        if((color3.dist(colorct) >= 0.2 ))
-            color3 = superSample(eye, Mc2w, (xmin + xmax)/2, xmax, (ymin+ymax)/2, ymax, depth + 1);
-        if((color4.dist(colorct) >= 0.2 ))
-            color4 = superSample(eye, Mc2w, xmin, (xmin + xmax)/2, (ymin+ymax)/2, ymax, depth + 1);
-        return (color1 + color2 + color3 + color4)*(1/8) + colorct*(1/2);
+        if(colorct.dist(colorlist[i]) < 0.2 || depth > 2)
+        {}
+        else
+            colorlist[i] = superSample(eye, Mc2w, min(filmP.x, filmPlist[i].x), max(filmP.x, filmPlist[i].x),
+                                min(filmP.y, filmPlist[i].y), max(filmP.y, filmPlist[i].y), depth + 1);
+        sum = sum + colorlist[i];
     }
+    return sum * (1.0f / settings.numSuperSamples);
 }
