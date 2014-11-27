@@ -68,11 +68,6 @@ void Scene::addLight(const CS123SceneLightData &sceneLight)
      m_scenelights.push_back(sceneLight);
 }
 
-void Scene::setGlobal(const CS123SceneGlobalData &global)
-{
-    m_sceneglobalData = global;
-}
-
 void Scene::analyzeNode(CS123SceneNode *rnode, glm::mat4 CTM)
 {
     if(!rnode->transformations.empty())
@@ -113,29 +108,6 @@ void Scene::analyzeNode(CS123SceneNode *rnode, glm::mat4 CTM)
     }
 }
 
-std::vector<CS123SceneLightData> Scene::getSceneLight()
-{
-    return m_scenelights;
-}
 
-CS123SceneGlobalData Scene::getSceneGlobalData()
-{
-    return m_sceneglobalData;
-}
-
-std::vector<primitiveNmatrix> Scene::getPrimitiveList()
-{
-    return m_tbd;
-}
-
-void Scene::setSceneLight(std::vector<CS123SceneLightData> sl)
-{
-    m_scenelights = sl;
-}
-
-void Scene::setPrimitiveList(std::vector<primitiveNmatrix> pl)
-{
-    m_tbd = pl;
-}
 
 

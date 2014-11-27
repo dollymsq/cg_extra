@@ -29,6 +29,8 @@
 
 #include "Settings.h"
 #include "RayScene.h"
+#include "RayTracer.h"
+
 
 class RayScene;
 
@@ -77,7 +79,6 @@ protected:
 
 private:
     RayScene *m_scene;
-
     //TODO: [BRUSH, INTERSECT, RAY] Put your member variables here.
 
     //[BRUSH]

@@ -36,13 +36,13 @@ public:
 
     static void parse(Scene *sceneToFill, CS123ISceneParser *parser);
 
-    std::vector<CS123SceneLightData> getSceneLight();
-    CS123SceneGlobalData getSceneGlobalData();
-    std::vector<primitiveNmatrix> getPrimitiveList();
+    std::vector<CS123SceneLightData> getSceneLight() {return m_scenelights;}
+    CS123SceneGlobalData getSceneGlobalData()   {return m_sceneglobalData;}
+    std::vector<primitiveNmatrix> getPrimitiveList() {return m_tbd;}
 
-    void setSceneLight(std::vector<CS123SceneLightData> sl);
-    void setPrimitiveList(std::vector<primitiveNmatrix> pl);
-    void setGlobal(const CS123SceneGlobalData &global);
+    void setSceneLight(std::vector<CS123SceneLightData> sl)  {    m_scenelights = sl;}
+    void setPrimitiveList(std::vector<primitiveNmatrix> pl)  {    m_tbd = pl;}
+    void setGlobal(const CS123SceneGlobalData &global) {      m_sceneglobalData = global; }
 
     int counter;
 

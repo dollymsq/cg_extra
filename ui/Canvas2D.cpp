@@ -257,7 +257,6 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
         this->resize(width,height);
         Vector4 eye(0,0,0,1);
 
-        Vector4 filmP(0,0,-1,1);
         glm::mat4 Mc2w = camera->getScaleMatrix() * camera->getViewMatrix();
         Mc2w = glm::inverse(Mc2w);
         Vector4 tp = Mc2w * eye;
@@ -269,54 +268,29 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
         m_scene->builKdtree();
         std::cout<< "kdtree built"<<endl;
 
-        if(settings.useSuperSampling && settings.numSuperSamples >= 2)
+        if(settings.useMultiThreading)
         {
-            for(int i = 0; i< height; i++)
+            int count = RayTracer::idealThreadCount();
+            RayTracer** raytracerArray = new RayTracer*[count];
+            for( int i = 0; i< count; i ++)
             {
-                for(int j = 0; j< width; j++)
-                {
-                    CS123SceneColor flcolor= superSample(eye, Mc2w, j-0.5, j+0.5, i-0.5, i+0.5, 0);
-                    BGRA canvascolor;
-                    canvascolor.b = round(255.0 * flcolor.b);
-                    canvascolor.g = round(255.0 * flcolor.g);
-                    canvascolor.r = round(255.0 * flcolor.r);
+                raytracerArray[i] = new RayTracer();
 
-                    data()[i*width + j] = canvascolor;
-               }
+                QObject::connect(raytracerArray[i], SIGNAL(finished()), raytracerArray[i], SLOT(deleteLater()));
+                QObject::connect(raytracerArray[i], SIGNAL(finished()), this, SLOT(update()));
+
+                raytracerArray[i]->prepare(eye, width, height, Mc2w, data(), m_scene, i, count);
+                raytracerArray[i]->start();
             }
         }
         else
         {
-            for(int i = 0; i< height; i++)
-            {
-                for(int j = 0; j< width; j++)
-                {
-                    //screen to film done(camera)
-                    filmP.x = 2.0*(float)j/(float)width-1.0;
-                    filmP.y = 1.0-2.0*(float)i/(float)height;
+            RayTracer* raytracer1 = new RayTracer();
+            raytracer1->prepare(eye, width, height, Mc2w, data(), m_scene, 0, 1);
+            QObject::connect(raytracer1, SIGNAL(finished()), raytracer1, SLOT(deleteLater()));
+            QObject::connect(raytracer1, SIGNAL(finished()), this, SLOT(update()));
 
-                    //to generate ray in world space, the filmP will corresponds to d, copy that
-                    Vector4 dir = m_scene->generateRay(eye, filmP, Mc2w);
-
-                    //calculate intersection point if any and its corresponding normal
-                    //                if(i == 297 && j == 484)
-                    //                if(i == 214 && j == 123)
-                    if(i == 52 && j == 573)
-                    {
-                        tp = filmP;
-                        //                    return;
-                    }
-                    //                std::cout<<"Image pos"<< j<<", "<<i<<"========================="<<endl;
-
-                    CS123SceneColor flcolor= m_scene->trace(eye,dir);
-                    BGRA canvascolor;
-                    canvascolor.b = round(255.0 * flcolor.b);
-                    canvascolor.g = round(255.0 * flcolor.g);
-                    canvascolor.r = round(255.0 * flcolor.r);
-
-                    data()[i*width + j] = canvascolor;
-                }
-            }
+            raytracer1->start();
         }
 
         if(settings.useAntiAliasing)
@@ -331,62 +305,6 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
     }
 }
 
-CS123SceneColor Canvas2D::superSample(const Vector4 &eye, const glm::mat4 &Mc2w, double xmin, double xmax, double ymin, double ymax, int depth)
-{
-    CS123SceneColor color1, color2, color3, color4, colorct;
-
-    Vector4 filmP(0,0,-1,1);
-    Vector4 filmP1(0,0,-1,1);
-    Vector4 filmP2(0,0,-1,1);
-    Vector4 filmP3(0,0,-1,1);
-    Vector4 filmP4(0,0,-1,1);
-
-    filmP.x = (2.0 * (xmin+xmax)/2.0 / width()) - 1.0;
-    filmP.y = 1.0 - (2.0 * (ymin+ymax)/2.0 / height());
-
-    filmP1.x = (2.0 * xmin/ (double)width())-1.0;
-    filmP1.y = 1.0 - (2.0*ymin/(double)height());
-
-    filmP2.x = 2.0 * xmax / (double)width() -1.0;
-    filmP2.y = 1.0-2.0*ymin/ (double)height();
-
-    filmP3.x = 2.0*xmax/width()-1.0;
-    filmP3.y = 1.0-2.0*ymax/height();
-
-    filmP4.x = 2.0*xmin/width()-1.0;
-    filmP4.y = 1.0-2.0*ymax/height();
-
-    Vector4 dir1 = m_scene->generateRay(eye, filmP1, Mc2w);
-    Vector4 dir2 = m_scene->generateRay(eye, filmP2, Mc2w);
-    Vector4 dir3 = m_scene->generateRay(eye, filmP3, Mc2w);
-    Vector4 dir4 = m_scene->generateRay(eye, filmP4, Mc2w);
-    Vector4 dir = m_scene->generateRay(eye, filmP, Mc2w);
-
-    color1 = m_scene->trace(eye,dir1);
-    color2 = m_scene->trace(eye,dir2);
-    color3 = m_scene->trace(eye,dir3);
-    color4 = m_scene->trace(eye,dir4);
-    colorct = m_scene->trace(eye,dir);
-
-    if((color1.dist(colorct) < 0.2 && color2.dist(colorct)  < 0.2
-            && color3.dist(colorct) < 0.2 && color4.dist(colorct) < 0.2)
-            || depth > sqrt(settings.numSuperSamples))
-    {
-        return (color1 + color2 + color3 + color4)*(1.0/8.0) + colorct*(1.0/2.0);
-    }
-    else
-    {
-        if((color1.dist(colorct) >= 0.2 ))
-            color1 = superSample(eye, Mc2w, xmin, (xmin + xmax)/2, ymin, (ymin+ymax)/2, depth + 1);
-        if((color2.dist(colorct) >= 0.2 ))
-            color2 = superSample(eye, Mc2w, (xmin + xmax)/2, xmax, ymin, (ymin+ymax)/2, depth + 1);
-        if((color3.dist(colorct) >= 0.2 ))
-            color3 = superSample(eye, Mc2w, (xmin + xmax)/2, xmax, (ymin+ymax)/2, ymax, depth + 1);
-        if((color4.dist(colorct) >= 0.2 ))
-            color4 = superSample(eye, Mc2w, xmin, (xmin + xmax)/2, (ymin+ymax)/2, ymax, depth + 1);
-        return (color1 + color2 + color3 + color4)*(1/8) + colorct*(1/2);
-    }
-}
 
 void Canvas2D::cancelRender()
 {

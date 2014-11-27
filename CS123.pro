@@ -52,7 +52,9 @@ SOURCES += brush/SmudgeBrush.cpp \
     shape/Torus.cpp \
     shape/Fractal.cpp \
     filter/FRotate.cpp \
-    filter/FBilateral.cpp
+    filter/FBilateral.cpp \
+    scenegraph/RayTracer.cpp \
+    scenegraph/KdtreeNode.cpp
 
 
 HEADERS += brush/SmudgeBrush.h \
@@ -99,7 +101,9 @@ HEADERS += brush/SmudgeBrush.h \
     shape/Torus.h \
     shape/Fractal.h \
     filter/FRotate.h \
-    filter/FBilateral.h
+    filter/FBilateral.h \
+    scenegraph/RayTracer.h \
+    scenegraph/KdtreeNode.h
 
 
 FORMS += ui/mainwindow.ui
