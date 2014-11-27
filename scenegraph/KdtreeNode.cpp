@@ -2,9 +2,8 @@
 
 void KdtreeNode::splitNode(int depth)
 {
-    if(isLeaf || (depth > 10 && m_tbd.size() <= 15))
+    if(isLeaf)
     {
-        isLeaf = true;
         return;
     }
 
