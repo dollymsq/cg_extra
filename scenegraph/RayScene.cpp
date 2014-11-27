@@ -23,16 +23,13 @@ Vector4 RayScene::generateRay(Vector4 eye, Vector4 filmP, glm::mat4 M)
     return dir;
 }
 
-
-void RayScene::trace(Vector4 eye, Vector4 dir, BGRA &canvascolor)
+CS123SceneColor RayScene::trace(Vector4 eye, Vector4 dir)
 {
     int intersectId = -1;
     m_intersectId = -1;
 
     CS123SceneColor flcolor= rayTrace(eye, dir, 0, intersectId);
-    canvascolor.b = round(255.0 * flcolor.b);
-    canvascolor.g = round(255.0 * flcolor.g);
-    canvascolor.r = round(255.0 * flcolor.r);
+    return flcolor;
 }
 
 CS123SceneColor RayScene::rayTrace(Vector4 eye, Vector4 dir, int recursiondepth, int intersectId)
@@ -567,8 +564,8 @@ void RayScene::setTextureImage()
 
      addPrimitive2Node(splitAxis, threshold, leftChild, rightChild);
 
-     leftChild->splitNode(++depth);
-     rightChild->splitNode(depth);
+     leftChild->splitNode(depth+1);
+     rightChild->splitNode(depth+1);
  }
 
  void KdtreeNode::countChild(char axis, REAL threshold, int& left, int & right)

@@ -27,6 +27,9 @@
 #include "camera/CamtransCamera.h"
 #include "camera/OrbitingCamera.h"
 
+#include "Settings.h"
+#include "RayScene.h"
+
 class RayScene;
 
 class Camera;
@@ -48,6 +51,8 @@ public:
 
     // UI will call this from the button on the "Ray" dock
     void renderImage(Camera *camera, int width, int height);
+
+    CS123SceneColor superSample(const Vector4 &eye, const glm::mat4 &Mc2w, double xmin, double xmax, double ymin, double ymax, int depth);
 
     // This will be called when the settings have changed
     virtual void settingsChanged();
@@ -82,6 +87,7 @@ private:
     float *m_canvas_tmp;
     Filter *m_filter;
     int previousBrush;
+
 
 };
 

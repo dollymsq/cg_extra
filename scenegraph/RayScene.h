@@ -49,7 +49,7 @@ public:
     RayScene();
     virtual ~RayScene();
     Vector4 generateRay(Vector4 eye, Vector4 filmP, glm::mat4 M);
-    void trace(Vector4 eye, Vector4 dir, BGRA &canvascolor);
+    CS123SceneColor trace(Vector4 eye, Vector4 dir);
     void calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatrix*> node_tbd, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial &tmaterial, Vector2 &textureCo, int &intersectId);
     void setTextureImage();
     void builKdtree();

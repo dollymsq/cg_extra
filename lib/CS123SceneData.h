@@ -58,6 +58,11 @@ struct CS123SceneColor
                     g > 1? 1 : g,
                     b > 1? 1 : b, 1);
         }
+        int dist(const CS123SceneColor colorct) const
+        {
+            return fabs(b - colorct.b) + fabs(g - colorct.g)
+                    + fabs(r - colorct.r);
+        }
 
 };
 
