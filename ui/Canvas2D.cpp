@@ -14,9 +14,6 @@
 #include <unistd.h>
 #include "Canvas2D.h"
 #include "Canvas3D.h"
-
-
-
 #include <QPainter>
 
 Canvas2D::Canvas2D()
@@ -38,7 +35,6 @@ Canvas2D::~Canvas2D()
         delete m_b;
     if (m_filter != NULL)
         delete m_filter;
-
 }
 
 // This is called when the canvas size is changed. You can change the canvas size by calling
@@ -273,37 +269,12 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
         m_scene->builKdtree();
         std::cout<< "kdtree built"<<endl;
 
-        if(settings.useSuperSampling)
+        if(settings.useSuperSampling && settings.numSuperSamples >= 2)
         {
-//            Vector4 filmP1(0,0,-1,1);
-//            Vector4 filmP2(0,0,-1,1);
-//            Vector4 filmP3(0,0,-1,1);
-//            Vector4 filmP4(0,0,-1,1);
-
             for(int i = 0; i< height; i++)
             {
                 for(int j = 0; j< width; j++)
                 {
-                    if(i == 137 && j == 298)
-                    {
-                        tp = filmP;
-                        //                    return;
-                    }
-//                    filmP.x = 2.0*(float)j/(float)width-1.0;
-//                    filmP.y = 1.0-2.0*(float)i/(float)height;
-
-//                    filmP1.x = 2.0*(float)(j - 0.5)/(float)width-1.0;
-//                    filmP1.y = 1.0-2.0*(float)(i - 0.5)/(float)height;
-
-//                    filmP2.x = 2.0*(float)(j - 0.5)/(float)width-1.0;
-//                    filmP2.y = 1.0-2.0*(float)(i + 0.5)/(float)height;
-
-//                    filmP3.x = 2.0*(float)(j + 0.5)/(float)width-1.0;
-//                    filmP3.y = 1.0-2.0*(float)(i + 0.5)/(float)height;
-
-//                    filmP4.x = 2.0*(float)(j + 0.5)/(float)width-1.0;
-//                    filmP4.y = 1.0-2.0*(float)(i - 0.5)/(float)height;
-
                     CS123SceneColor flcolor= superSample(eye, Mc2w, j-0.5, j+0.5, i-0.5, i+0.5, 0);
                     BGRA canvascolor;
                     canvascolor.b = round(255.0 * flcolor.b);
@@ -330,7 +301,7 @@ void Canvas2D::renderImage(Camera *camera, int width, int height)
                     //calculate intersection point if any and its corresponding normal
                     //                if(i == 297 && j == 484)
                     //                if(i == 214 && j == 123)
-                    if(i == 137 && j == 298)
+                    if(i == 52 && j == 573)
                     {
                         tp = filmP;
                         //                    return;

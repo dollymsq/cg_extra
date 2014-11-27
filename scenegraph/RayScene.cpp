@@ -83,7 +83,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
     tcolor.r = m_sceneglobalData.ka * matrl.cAmbient.r;
 
     //diffuse part and specular part for each light
-    Vector3 viewray(-dir.x, -dir.y, -dir.z);
+    Vector3 viewray(dir.x, dir.y, dir.z);
     viewray = glm::normalize(viewray);
     std::vector<CS123SceneLightData>::iterator it;
     for(it = m_scenelights.begin(); it != m_scenelights.end(); it ++)
@@ -116,7 +116,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
             tcolor.r += fatt * (*it).color.r * coeff1.z;
 
             //specular part
-            Vector3 coeff2 = specularShade(lm,n,viewray,matrl);
+            Vector3 coeff2 = specularShade(lm,n,-viewray,matrl);
             tcolor.b += fatt * (*it).color.b * coeff2.x;
             tcolor.g += fatt * (*it).color.g * coeff2.y;
             tcolor.r += fatt * (*it).color.r * coeff2.z;
@@ -139,7 +139,7 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
             tcolor.r += (*it).color.r * coeff1.z;
 
             //specular part
-            Vector3 coeff2 = specularShade(lightdirInverse,n,viewray,matrl);
+            Vector3 coeff2 = specularShade(lightdirInverse,n,-viewray,matrl);
             tcolor.b += (*it).color.b * coeff2.x;
             tcolor.g += (*it).color.g * coeff2.y;
             tcolor.r += (*it).color.r * coeff2.z;
@@ -149,15 +149,40 @@ CS123SceneColor RayScene::illuminatePoint(Vector4 eye, Vector4 dir, REAL t, Vect
     //reflected part
     if(settings.useReflection && matrl.cReflective.b != 0 && matrl.cReflective.g != 0 && matrl.cReflective.r != 0)
     {
-        Vector3 rflvr= - glm::reflect(viewray, n);
+        Vector3 rflvr = glm::reflect(viewray, n);
         Vector4 rflvrv4 = glm::normalize(Vector4(rflvr.x, rflvr.y, rflvr.z, 0));
         m_intersectId = intersectId;
-        CS123SceneColor nextPointColor = rayTrace(pos_objv4,rflvrv4,++recursiondepth, intersectId);
+        CS123SceneColor nextPointColor = rayTrace(pos_objv4,rflvrv4,recursiondepth + 1, intersectId);
 
         tcolor.b += m_sceneglobalData.ks * matrl.cReflective.b * nextPointColor.b;
         tcolor.g += m_sceneglobalData.ks * matrl.cReflective.g * nextPointColor.g;
         tcolor.r += m_sceneglobalData.ks * matrl.cReflective.r * nextPointColor.r;
     }
+
+    //refracted part
+    if(settings.useRefraction && matrl.cTransparent.b != 0 && matrl.cTransparent.g != 0 && matrl.cTransparent.r != 0)
+    {
+        Vector3 rfrvr;
+        if(glm::dot(viewray, n) < 0)
+            rfrvr = glm::refract(viewray, n, matrl.ior);
+        else
+            rfrvr = glm::refract(viewray, -n, 1.0f/matrl.ior);
+
+//        rfrvr = viewray;
+        pos_objv4 = pos_objv4 + dir * 0.00001f ;
+        Vector4 rfrvrv4 = glm::normalize(Vector4(rfrvr.x, rfrvr.y, rfrvr.z, 0));
+        m_intersectId = intersectId;
+        CS123SceneColor nextPointColor = rayTrace(pos_objv4,rfrvrv4,recursiondepth, intersectId);
+
+        tcolor.b += m_sceneglobalData.kt * matrl.cTransparent.b * nextPointColor.b;
+        tcolor.g += m_sceneglobalData.kt * matrl.cTransparent.g * nextPointColor.g;
+        tcolor.r += m_sceneglobalData.kt * matrl.cTransparent.r * nextPointColor.r;
+
+//        tcolor.b = 0.8 * tcolor.b +  m_sceneglobalData.kt * matrl.cTransparent.b * nextPointColor.b;
+//        tcolor.g = 0.8 * tcolor.g +  m_sceneglobalData.kt * matrl.cTransparent.g * nextPointColor.g;
+//        tcolor.r = 0.8 * tcolor.r +  m_sceneglobalData.kt * matrl.cTransparent.r * nextPointColor.r;
+    }
+
 
     return tcolor;
 }
@@ -286,19 +311,59 @@ Vector3 RayScene::specularShade(Vector3 lightray, Vector3 n, Vector3 viewray, CS
 CS123SceneColor RayScene::textureShade(CS123SceneMaterial matrl, Vector2 textureCo, CS123SceneColor tcolor)
 {
     CS123SceneColor mcl;
+    QRgb c1, c2, c3, c4;
+    int idxs1, idxt1 , idxs2, idxt2, idxs3, idxt3, idxs4, idxt4;
+    float w1, w2, w3, w4;
     if(matrl.textureMap->isUsed)
     {
         QImage tp = texImgPair[matrl.textureMap->filename];
 
-        int idxs, idxt;
-        idxs = ((int)(textureCo.x*matrl.textureMap->repeatU*tp.width()))%tp.width();
-        idxt = ((int)(textureCo.y*matrl.textureMap->repeatV*tp.height()))%tp.height();
+        float idxs, idxt;
+        idxs = (textureCo.x*matrl.textureMap->repeatU - floor(textureCo.x*matrl.textureMap->repeatU))*tp.width();
+        idxt = (textureCo.y*matrl.textureMap->repeatV - floor(textureCo.y*matrl.textureMap->repeatV))*tp.height();
 
-        QRgb texcolor = tp.pixel(idxs, idxt);
+        idxs1 = floor(idxs);        idxt1 = floor(idxt);
+        idxs2 = floor(idxs);        idxt2 = ceil(idxt);
+        idxs3 = ceil(idxs);        idxt3 = ceil(idxt);
+        idxs4 = ceil(idxs);        idxt4 = floor(idxt);
 
-        mcl.b = (1-matrl.blend)*tcolor.b + matrl.blend * float(qBlue(texcolor))/255.0f;
-        mcl.g = (1-matrl.blend)*tcolor.g + matrl.blend * float(qGreen(texcolor))/255.0f;
-        mcl.r = (1-matrl.blend)*tcolor.r + matrl.blend * float(qRed(texcolor))/255.0f;
+        idxs1 = handleEdgeIndex(idxs1, tp.width());
+        idxs2 = handleEdgeIndex(idxs2, tp.width());
+        idxs3 = handleEdgeIndex(idxs3, tp.width());
+        idxs4 = handleEdgeIndex(idxs4, tp.width());
+
+        idxt1 = handleEdgeIndex(idxt1, tp.height());
+        idxt2 = handleEdgeIndex(idxt2, tp.height());
+        idxt3 =  handleEdgeIndex(idxt3, tp.height());
+        idxt4 =  handleEdgeIndex(idxt4, tp.height());
+
+        w1 = fabs(idxs - idxs1) + fabs(idxt - idxt1);
+
+        w2 = fabs(idxs - idxs2) + fabs(idxt - idxt2);
+
+        w3 = fabs(idxs - idxs3) + fabs(idxt - idxt3);
+
+        w4 = fabs(idxs - idxs4) + fabs(idxt - idxt4);
+
+        c1 = tp.pixel(idxs1, idxt1);
+        c2 = tp.pixel(idxs2, idxt2);
+        c3 = tp.pixel(idxs3, idxt3);
+        c4 = tp.pixel(idxs4, idxt4);
+
+        mcl.b = (float(qBlue(c1))/255.0f + float(qBlue(c2))/255.0f
+                + float(qBlue(c3))/255.0f + float(qBlue(c4))/255.0f) / 4.0f;
+        mcl.g = (float(qGreen(c1))/255.0f + float(qGreen(c2))/255.0f
+                + float(qGreen(c3))/255.0f + float(qGreen(c4))/255.0f) / 4.0f;
+        mcl.r = (float(qRed(c1))/255.0f + float(qRed(c2))/255.0f
+                 + float(qRed(c3))/255.0f + float(qRed(c4))/255.0f) / 4.0f;
+
+//        mcl.b = (1-matrl.blend)*tcolor.b + matrl.blend * float(qBlue(texcolor))/255.0f;
+//        mcl.g = (1-matrl.blend)*tcolor.g + matrl.blend * float(qGreen(texcolor))/255.0f;
+//        mcl.r = (1-matrl.blend)*tcolor.r + matrl.blend * float(qRed(texcolor))/255.0f;
+
+        mcl.b = (1-matrl.blend)*tcolor.b + matrl.blend * mcl.b;
+        mcl.g = (1-matrl.blend)*tcolor.g + matrl.blend * mcl.g;
+        mcl.r = (1-matrl.blend)*tcolor.r + matrl.blend * mcl.r;
 
         return mcl;
     }
@@ -485,7 +550,7 @@ void RayScene::setTextureImage()
 
  void KdtreeNode::splitNode(int depth)
  {
-     if(isLeaf || depth > 10)
+     if(isLeaf || (depth > 10 && m_tbd.size() <= 15))
      {
          isLeaf = true;
          return;
@@ -676,12 +741,12 @@ void RayScene::setTextureImage()
          break;
      }
 
-     if(left->m_tbd.size() < 5)
+     if(left->m_tbd.size() < 6)
          left->isLeaf = true;
      else
          left->isLeaf = false;
 
-     if(right->m_tbd.size() < 5)
+     if(right->m_tbd.size() < 6)
          right->isLeaf = true;
      else
          right->isLeaf = false;

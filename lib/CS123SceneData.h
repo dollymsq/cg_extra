@@ -126,7 +126,6 @@ struct CS123SceneMaterial
    // the object in sceneview. You can get away with ignoring the other color values until
    // intersect and ray.
    CS123SceneColor cDiffuse;
-   
    CS123SceneColor cAmbient;
    CS123SceneColor cReflective;
    CS123SceneColor cSpecular;

@@ -10,6 +10,8 @@
 #include "shape/Torus.h"
 #include "shape/Fractal.h"
 
+#include "filter/Filter.h"
+
 /**
  * @class RayScene
  *

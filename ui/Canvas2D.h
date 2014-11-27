@@ -75,7 +75,6 @@ protected:
     virtual void notifySizeChanged(int w, int h);
 
 
-
 private:
     RayScene *m_scene;
 
