@@ -15,6 +15,8 @@ void RayTracer::prepare(Vector4 e, int w, int h, glm::mat4 M, BGRA *d, RayScene*
     texImgPair = m_s->texImgPair;
     setGlobal(m_s->getSceneGlobalData());
     setSceneLight(m_s->getSceneLight());
+    pnmDict = m_s->pnmDict;
+
     m_order = odr;
     m_interval = interval;
 }
@@ -209,27 +211,28 @@ bool RayTracer::isInShadow(Vector3 object, Vector3 raydir, REAL tmin, int inters
         return false;
 }
 
-void RayTracer::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatrix*> node_tbd, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
+void RayTracer::calculateIntersection(REAL &tpostmin, std::vector<int> node_tbdId, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial& tmaterial, Vector2 &textureCo, int &intersectId)
 {
     Shape* m_vshape = NULL;
     glm::mat4 Mw2o;
-    std::vector<primitiveNmatrix*>::iterator it;
+    std::vector<int>::iterator it;
     Vector3 tnormal(0,0,0);
     int tpId = intersectId;
     REAL t = MAX_LIMIT; // to compare
     Vector2 textureCot = Vector2(0,0);
 
-    for(it = node_tbd.begin(); it != node_tbd.end(); it++)
+    for(it = node_tbdId.begin(); it != node_tbdId.end(); it++)
     {
-        if((*it)->shapetype!= PRIMITIVE_CUBE &&(*it)->shapetype!= PRIMITIVE_CONE &&(*it)->shapetype!= PRIMITIVE_CYLINDER && (*it)->shapetype!= PRIMITIVE_SPHERE)
+        int Id = (*it);
+        if(pnmDict[Id].shapetype!= PRIMITIVE_CUBE && pnmDict[Id].shapetype!= PRIMITIVE_CONE && pnmDict[Id].shapetype!= PRIMITIVE_CYLINDER && pnmDict[Id].shapetype!= PRIMITIVE_SPHERE)
             continue;
-        if((*it)->id == m_intersectId)
+        if( Id == m_intersectId)
             continue;
-        Mw2o = glm::inverse((*it)->comMatrix);
+        Mw2o = glm::inverse(pnmDict[Id].comMatrix);
         Vector4 p = Mw2o*start;
         Vector4 d = Mw2o*dir;
 
-        switch((*it)->shapetype)
+        switch(pnmDict[Id].shapetype)
         {
         case PRIMITIVE_CUBE:
             m_vshape = new Cube(p,d);
@@ -257,10 +260,10 @@ void RayTracer::calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatr
         if(t>1E-6 && t < tpostmin)
         {
             tpostmin = t;
-            normal = transNormalo2w(tnormal,glm::inverse((*it)->comMatrix));
-            tmaterial = (*it)->material;
+            normal = transNormalo2w(tnormal,glm::inverse(pnmDict[Id].comMatrix));
+            tmaterial = pnmDict[Id].material;
             textureCo = textureCot;
-            tpId = (*it)->id;
+            tpId = Id;
         }
     }
     intersectId = tpId;
@@ -370,8 +373,8 @@ void RayTracer::traverseTree(KdtreeNode* node, REAL &t, const Vector4 &p, const 
 {
     if(node->isLeaf)
     {
-        if(node->m_tbd.size() > 0)
-            calculateIntersection(t, node->m_tbd, p,d,normal,tmaterial,textureCo, intersectId);
+        if(node->m_tbdId.size() > 0)
+            calculateIntersection(t, node->m_tbdId, p,d,normal,tmaterial,textureCo, intersectId);
         return ;
     }
     Vector3 n1 = Vector3(0, 1, 0);

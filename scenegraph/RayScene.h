@@ -30,6 +30,10 @@ public:
     void setTextureImage();
     KdtreeNode *m_root;
     std::map<std::string, QImage> texImgPair;
+    std::map<int, primitiveNmatrix> pnmDict;
+    void splitNode(KdtreeNode* node, int depth);
+    void countChild(KdtreeNode* node, char axis, REAL threshold, int& left, int & right);
+    void addPrimitive2Node(KdtreeNode* node, char axis, REAL threshold);
 
 protected:
     void calculateAABB(Vector4 v, Vector2& xRange, Vector2& yRange, Vector2& zRange);

@@ -29,7 +29,7 @@ public:
     RayTracer();
 
     CS123SceneColor trace(Vector4 eye, Vector4 dir);
-    void calculateIntersection(REAL &tpostmin, std::vector<primitiveNmatrix*> node_tbd, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial &tmaterial, Vector2 &textureCo, int &intersectId);
+    void calculateIntersection(REAL &tpostmin, std::vector<int> node_tbd, Vector4 start, Vector4 dir, Vector3& normal, CS123SceneMaterial &tmaterial, Vector2 &textureCo, int &intersectId);
     void prepare(Vector4 e, int w, int h, glm::mat4 M, BGRA *d, RayScene *m_s, int odr, int interval);
 
     void setSceneLight(std::vector<CS123SceneLightData> sl)  {    m_scenelights = sl;}
@@ -50,6 +50,7 @@ private:
     CS123SceneColor superSample(const Vector4 &eye, const glm::mat4 &Mc2w, double xmin, double xmax, double ymin, double ymax, int depth);
 
     std::map<std::string, QImage> texImgPair;
+    std::map<int, primitiveNmatrix> pnmDict;
     KdtreeNode *m_root;
     Vector4 eye;
     int width, height, m_order, m_interval;
